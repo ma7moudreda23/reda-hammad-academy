@@ -37,20 +37,28 @@ function toView(c: {
 }
 
 export async function getPublishedCourses(limit?: number): Promise<CourseView[]> {
-  const rows = await prisma.course.findMany({
-    where: { isPublished: true },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-    ...(limit ? { take: limit } : {}),
-  });
-  return rows.map(toView);
+  try {
+    const rows = await prisma.course.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+      ...(limit ? { take: limit } : {}),
+    });
+    return rows.map(toView);
+  } catch {
+    return [];
+  }
 }
 
 export async function getFeaturedCourses(): Promise<CourseView[]> {
-  const rows = await prisma.course.findMany({
-    where: { isPublished: true, isFeatured: true },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-  });
-  return rows.map(toView);
+  try {
+    const rows = await prisma.course.findMany({
+      where: { isPublished: true, isFeatured: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    });
+    return rows.map(toView);
+  } catch {
+    return [];
+  }
 }
 
 export async function getCourseBySlug(slug: string) {

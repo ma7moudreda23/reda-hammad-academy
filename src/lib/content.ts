@@ -197,14 +197,15 @@ function deepMerge<T>(base: T, override: unknown): T {
 }
 
 export async function getHomeContent(): Promise<HomeContent> {
-  const row = await prisma.siteSetting.findUnique({
-    where: { key: HOME_CONTENT_KEY },
-  });
-  if (!row?.value) return DEFAULT_HOME;
   try {
+    const row = await prisma.siteSetting.findUnique({
+      where: { key: HOME_CONTENT_KEY },
+    });
+    if (!row?.value) return DEFAULT_HOME;
     const parsed = JSON.parse(row.value);
     return deepMerge(DEFAULT_HOME, parsed);
   } catch {
+    // DB not ready yet (e.g., first deploy before tables exist) — fall back.
     return DEFAULT_HOME;
   }
 }
