@@ -49,6 +49,11 @@ export type HomeContent = {
     buttonText: string;
   };
   social: { platform: string; url: string }[];
+  contact: {
+    title: string;
+    subtitle: string;
+    whatsapp: string;
+  };
 };
 
 export const HOME_CONTENT_KEY = "home";
@@ -174,6 +179,11 @@ export const DEFAULT_HOME: HomeContent = {
     buttonText: "اشترك الآن",
   },
   social: [],
+  contact: {
+    title: "تواصل معنا",
+    subtitle: "عندك أي سؤال أو مشكلة؟ فريق الدعم الفني جاهز لمساعدتك على واتساب.",
+    whatsapp: "+966540858626",
+  },
 };
 
 function deepMerge<T>(base: T, override: unknown): T {

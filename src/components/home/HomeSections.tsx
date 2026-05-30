@@ -15,6 +15,7 @@ import {
 } from "@/components/icons";
 import { BrandLogo } from "@/components/Logo";
 import { PromoVideo } from "@/components/PromoVideo";
+import { WhatsappIcon } from "@/components/social-icons";
 
 function toEmbed(url: string) {
   try {
@@ -438,6 +439,40 @@ export function HomeSections({
           </div>
         </Reveal>
       </section>
+
+      {/* CONTACT */}
+      {content.contact.whatsapp && (
+        <section id="contact" className="mx-auto max-w-4xl px-5 pb-24">
+          <Reveal>
+            <div className="rounded-[2rem] border border-brand-100 bg-white p-8 text-center shadow-lg shadow-brand-900/5 sm:p-12">
+              <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#25D366] text-white shadow-md">
+                <WhatsappIcon className="h-9 w-9" />
+              </span>
+              <h2 className="mt-5 text-3xl font-black text-brand-900 sm:text-4xl">
+                {content.contact.title}
+              </h2>
+              {content.contact.subtitle && (
+                <p className="mx-auto mt-3 max-w-xl text-lg text-brand-900/65">
+                  {content.contact.subtitle}
+                </p>
+              )}
+              <a
+                href={`https://wa.me/${content.contact.whatsapp.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                dir="ltr"
+                className="mt-7 inline-flex items-center gap-3 rounded-xl bg-[#25D366] px-7 py-4 text-lg font-extrabold text-white shadow-lg shadow-[#25D366]/30 transition-all duration-200 hover:bg-[#1ebe5d] hover:shadow-xl"
+              >
+                <WhatsappIcon className="h-6 w-6" />
+                {content.contact.whatsapp}
+              </a>
+              <p className="mt-3 text-sm font-semibold text-brand-900/45">
+                الدعم الفني عبر واتساب
+              </p>
+            </div>
+          </Reveal>
+        </section>
+      )}
     </>
   );
 }

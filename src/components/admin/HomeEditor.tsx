@@ -402,6 +402,16 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة رابط
           </button>
         </Card>
+
+        {/* Contact (WhatsApp) */}
+        <Card title="تواصل معنا (واتساب الدعم الفني)" desc="يظهر كقسم في الصفحة الرئيسية بزر واتساب يفتح المحادثة مباشرة.">
+          <Field label="عنوان القسم" value={c.contact?.title ?? ""} onChange={(v) => update("contact", { ...c.contact, title: v })} />
+          <Area label="وصف مختصر" rows={2} value={c.contact?.subtitle ?? ""} onChange={(v) => update("contact", { ...c.contact, subtitle: v })} />
+          <Field label="رقم واتساب الدعم (بصيغة دولية)" dir="ltr" value={c.contact?.whatsapp ?? ""} onChange={(v) => update("contact", { ...c.contact, whatsapp: v })} placeholder="+966540858626" />
+          <p className="text-xs text-brand-900/45">
+            اكتب الرقم بالصيغة الدولية مع كود الدولة (مثال: +966540858626). الضغط على الزر بيفتح محادثة واتساب على الرقم ده.
+          </p>
+        </Card>
       </div>
 
       {/* Sticky save bar */}
