@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: #f8f9fd;
+  --color-foreground: #181a4d;
+
+  /* Brand — Navy (from the RH logo) */
+  --color-brand-50: #eef0f9;
+  --color-brand-100: #dadef2;
+  --color-brand-200: #b4bbe6;
+  --color-brand-300: #8d97d9;
+  --color-brand-400: #6373c4;
+  --color-brand-500: #3f4fab;
+  --color-brand-600: #343a93;
+  --color-brand-700: #2b2f8c;
+  --color-brand-800: #222466;
+  --color-brand-900: #181a4d;
+
+  /* Accent — Gold (from the RH logo) */
+  --color-accent-300: #e6d4a3;
+  --color-accent-400: #dac383;
+  --color-accent-500: #cbae67;
+  --color-accent-600: #b5934a;
+
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--color-brand-100);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(43, 47, 140, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(43, 47, 140, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+::selection {
+  background: var(--color-accent-300);
+  color: var(--color-brand-900);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-300);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-400);
 }
