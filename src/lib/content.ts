@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { prisma, dbQuery } from "@/lib/db";
 
 export type Feature = { title: string; description: string; icon: string };
 export type Stat = { value: string; label: string };
@@ -207,15 +207,15 @@ function deepMerge<T>(base: T, override: unknown): T {
 }
 
 export async function getHomeContent(): Promise<HomeContent> {
+  // DB not ready / unreachable / slow → fall back to defaults fast (never hang).
+  const row = await dbQuery(
+    () => prisma.siteSetting.findUnique({ where: { key: HOME_CONTENT_KEY } }),
+    null,
+  );
+  if (!row?.value) return DEFAULT_HOME;
   try {
-    const row = await prisma.siteSetting.findUnique({
-      where: { key: HOME_CONTENT_KEY },
-    });
-    if (!row?.value) return DEFAULT_HOME;
-    const parsed = JSON.parse(row.value);
-    return deepMerge(DEFAULT_HOME, parsed);
+    return deepMerge(DEFAULT_HOME, JSON.parse(row.value));
   } catch {
-    // DB not ready yet (e.g., first deploy before tables exist) — fall back.
     return DEFAULT_HOME;
   }
 }

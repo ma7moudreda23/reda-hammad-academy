@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { prisma, dbQuery } from "@/lib/db";
 import { PLATFORM_URL } from "@/lib/site";
 import type { CourseView } from "@/components/CourseCard";
 
@@ -37,28 +37,28 @@ function toView(c: {
 }
 
 export async function getPublishedCourses(limit?: number): Promise<CourseView[]> {
-  try {
-    const rows = await prisma.course.findMany({
-      where: { isPublished: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      ...(limit ? { take: limit } : {}),
-    });
-    return rows.map(toView);
-  } catch {
-    return [];
-  }
+  const rows = await dbQuery(
+    () =>
+      prisma.course.findMany({
+        where: { isPublished: true },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+        ...(limit ? { take: limit } : {}),
+      }),
+    [],
+  );
+  return rows.map(toView);
 }
 
 export async function getFeaturedCourses(): Promise<CourseView[]> {
-  try {
-    const rows = await prisma.course.findMany({
-      where: { isPublished: true, isFeatured: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-    });
-    return rows.map(toView);
-  } catch {
-    return [];
-  }
+  const rows = await dbQuery(
+    () =>
+      prisma.course.findMany({
+        where: { isPublished: true, isFeatured: true },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+      }),
+    [],
+  );
+  return rows.map(toView);
 }
 
 export async function getCourseBySlug(slug: string) {
