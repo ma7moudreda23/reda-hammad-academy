@@ -1,5 +1,5 @@
 import "server-only";
-import Database from "better-sqlite3";
+import * as mariadb from "mariadb";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
@@ -7,42 +7,46 @@ const PLATFORM =
   process.env.NEXT_PUBLIC_PLATFORM_URL ??
   "https://platform.redahammadacademy.com/";
 
-// Exact schema matching Prisma (so the Prisma client reads/writes correctly).
-const SCHEMA_SQL = `
-CREATE TABLE IF NOT EXISTS "Admin" (
-  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "email" TEXT NOT NULL,
-  "passwordHash" TEXT NOT NULL,
-  "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-CREATE UNIQUE INDEX IF NOT EXISTS "Admin_email_key" ON "Admin"("email");
-CREATE TABLE IF NOT EXISTS "SiteSetting" (
-  "key" TEXT NOT NULL PRIMARY KEY,
-  "value" TEXT NOT NULL DEFAULT '',
-  "updatedAt" DATETIME NOT NULL
-);
-CREATE TABLE IF NOT EXISTS "Course" (
-  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "slug" TEXT NOT NULL,
-  "title" TEXT NOT NULL,
-  "description" TEXT NOT NULL DEFAULT '',
-  "longDescription" TEXT NOT NULL DEFAULT '',
-  "curriculum" TEXT NOT NULL DEFAULT '[]',
-  "features" TEXT NOT NULL DEFAULT '[]',
-  "imageUrl" TEXT NOT NULL DEFAULT '',
-  "price" TEXT NOT NULL DEFAULT '',
-  "currency" TEXT NOT NULL DEFAULT 'ريال سعودي',
-  "platformUrl" TEXT NOT NULL DEFAULT '',
-  "badge" TEXT NOT NULL DEFAULT '',
-  "category" TEXT NOT NULL DEFAULT '',
-  "isPublished" BOOLEAN NOT NULL DEFAULT true,
-  "isFeatured" BOOLEAN NOT NULL DEFAULT false,
-  "sortOrder" INTEGER NOT NULL DEFAULT 0,
-  "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updatedAt" DATETIME NOT NULL
-);
-CREATE UNIQUE INDEX IF NOT EXISTS "Course_slug_key" ON "Course"("slug");
-`;
+const CHARSET = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+const STATEMENTS = [
+  `CREATE TABLE IF NOT EXISTS \`Admin\` (
+    \`id\` INT NOT NULL AUTO_INCREMENT,
+    \`email\` VARCHAR(191) NOT NULL,
+    \`passwordHash\` VARCHAR(191) NOT NULL,
+    \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (\`id\`),
+    UNIQUE INDEX \`Admin_email_key\`(\`email\`)
+  ) ${CHARSET}`,
+  `CREATE TABLE IF NOT EXISTS \`SiteSetting\` (
+    \`key\` VARCHAR(191) NOT NULL,
+    \`value\` LONGTEXT NOT NULL,
+    \`updatedAt\` DATETIME(3) NOT NULL,
+    PRIMARY KEY (\`key\`)
+  ) ${CHARSET}`,
+  `CREATE TABLE IF NOT EXISTS \`Course\` (
+    \`id\` INT NOT NULL AUTO_INCREMENT,
+    \`slug\` VARCHAR(191) NOT NULL,
+    \`title\` VARCHAR(191) NOT NULL,
+    \`description\` TEXT NOT NULL,
+    \`longDescription\` TEXT NOT NULL,
+    \`curriculum\` TEXT NOT NULL,
+    \`features\` TEXT NOT NULL,
+    \`imageUrl\` TEXT NOT NULL,
+    \`price\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`currency\` VARCHAR(191) NOT NULL DEFAULT 'ريال سعودي',
+    \`platformUrl\` TEXT NOT NULL,
+    \`badge\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`category\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`isPublished\` TINYINT(1) NOT NULL DEFAULT 1,
+    \`isFeatured\` TINYINT(1) NOT NULL DEFAULT 0,
+    \`sortOrder\` INT NOT NULL DEFAULT 0,
+    \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    \`updatedAt\` DATETIME(3) NOT NULL,
+    PRIMARY KEY (\`id\`),
+    UNIQUE INDEX \`Course_slug_key\`(\`slug\`)
+  ) ${CHARSET}`,
+];
 
 let ran = false;
 
@@ -50,12 +54,26 @@ export async function ensureDatabase() {
   if (ran) return;
   ran = true;
 
-  // 1) Create tables (in-process, no external binary — works on managed hosting).
-  const file = (process.env.DATABASE_URL ?? "file:./dev.db").replace(/^file:/, "");
+  const url = process.env.DATABASE_URL;
+  if (!url || !/^mysql/i.test(url)) {
+    console.error("ensureDatabase: DATABASE_URL missing or not mysql");
+    return;
+  }
+
+  // 1) Create tables via raw SQL (in-process — no external Prisma engine binary).
   try {
-    const db = new Database(file);
-    db.exec(SCHEMA_SQL);
-    db.close();
+    const u = new URL(url);
+    const conn = await mariadb.createConnection({
+      host: u.hostname,
+      port: u.port ? Number(u.port) : 3306,
+      user: decodeURIComponent(u.username),
+      password: decodeURIComponent(u.password),
+      database: u.pathname.replace(/^\//, ""),
+    });
+    for (const sql of STATEMENTS) {
+      await conn.query(sql);
+    }
+    await conn.end();
   } catch (e) {
     console.error("ensureDatabase: schema creation failed", e);
     return;

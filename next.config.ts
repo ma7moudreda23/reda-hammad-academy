@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
-  // better-sqlite3 is a native module — keep it external on the server
-  serverExternalPackages: ["better-sqlite3", "@prisma/adapter-better-sqlite3"],
+  // keep the DB driver external on the server
+  serverExternalPackages: ["mariadb", "@prisma/adapter-mariadb"],
 };
 
 export default nextConfig;

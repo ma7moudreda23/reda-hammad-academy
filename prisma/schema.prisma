@@ -1,5 +1,4 @@
-// Prisma schema for Reda Hammad Academy
-// Dev: SQLite (zero-config). Prod (Hostinger): can switch provider to "mysql".
+// Prisma schema for Reda Hammad Academy — MySQL (Hostinger).
 // learn more: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -8,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
 }
 
 model Admin {
@@ -21,7 +20,7 @@ model Admin {
 // Key/value store for editable homepage content (hero, about, stats, videos...)
 model SiteSetting {
   key       String   @id
-  value     String   @default("")
+  value     String   @default("") @db.LongText
   updatedAt DateTime @updatedAt
 }
 
@@ -29,14 +28,14 @@ model Course {
   id              Int      @id @default(autoincrement())
   slug            String   @unique
   title           String
-  description     String   @default("")
-  longDescription String   @default("")
-  curriculum      String   @default("[]")
-  features        String   @default("[]")
-  imageUrl        String   @default("")
+  description     String   @default("") @db.Text
+  longDescription String   @default("") @db.Text
+  curriculum      String   @default("[]") @db.Text
+  features        String   @default("[]") @db.Text
+  imageUrl        String   @default("") @db.Text
   price           String   @default("")
   currency        String   @default("ريال سعودي")
-  platformUrl     String   @default("")
+  platformUrl     String   @default("") @db.Text
   badge           String   @default("")
   category        String   @default("")
   isPublished     Boolean  @default(true)
