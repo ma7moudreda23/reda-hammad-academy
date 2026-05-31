@@ -48,16 +48,10 @@ const STATEMENTS = [
   ) ${CHARSET}`,
 ];
 
-let ran = false;
-
-export async function ensureDatabase() {
-  if (ran) return;
-  ran = true;
-
+export async function ensureDatabase(): Promise<{ ok: boolean; message: string }> {
   const url = process.env.DATABASE_URL;
   if (!url || !/^mysql/i.test(url)) {
-    console.error("ensureDatabase: DATABASE_URL missing or not mysql");
-    return;
+    return { ok: false, message: "DATABASE_URL missing or not mysql" };
   }
 
   // 1) Create tables via raw SQL (in-process — no external Prisma engine binary).
@@ -79,7 +73,7 @@ export async function ensureDatabase() {
     await conn.end().catch(() => {});
   } catch (e) {
     console.error("ensureDatabase: schema creation failed", e);
-    return;
+    return { ok: false, message: "schema creation failed: " + String(e) };
   }
 
   // 2) Seed once (only if there's no admin yet) — via Prisma so dates are correct.
@@ -138,8 +132,11 @@ export async function ensureDatabase() {
         });
       }
       console.log("✓ Database seeded (admin + Mawhiba courses)");
+      return { ok: true, message: "tables created + seeded (admin + courses)" };
     }
+    return { ok: true, message: "tables ready (already seeded)" };
   } catch (e) {
     console.error("ensureDatabase: seed failed", e);
+    return { ok: false, message: "seed failed: " + String(e) };
   }
 }
