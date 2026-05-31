@@ -69,6 +69,7 @@ export async function ensureDatabase() {
       user: decodeURIComponent(u.username),
       password: decodeURIComponent(u.password),
       database: u.pathname.replace(/^\//, ""),
+      connectTimeout: 8000,
     });
     for (const sql of STATEMENTS) {
       await conn.query(sql);
