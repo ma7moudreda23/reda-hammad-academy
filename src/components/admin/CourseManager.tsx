@@ -133,7 +133,7 @@ export function CourseManager({
     );
     set("curriculum", next);
   }
-  function updateItem(si: number, ii: number, patch: Partial<{ title: string; type: CourseItemType }>) {
+  function updateItem(si: number, ii: number, patch: Partial<{ title: string; type: CourseItemType; url: string }>) {
     if (!draft) return;
     const next = draft.curriculum.map((s, x) =>
       x === si
@@ -417,27 +417,41 @@ export function CourseManager({
                           {section.items.map((item, ii) => {
                             const Icon = TYPE_ICON[item.type] ?? PlayIcon;
                             return (
-                              <div key={ii} className="flex items-center gap-2">
-                                <Icon className="h-4 w-4 shrink-0 text-brand-400" />
-                                <input
-                                  value={item.title}
-                                  onChange={(e) => updateItem(si, ii, { title: e.target.value })}
-                                  placeholder="اسم العنصر (مثال: الفيديو الأول - المتجهات)"
-                                  className="flex-1 rounded-lg border border-brand-200 px-3 py-1.5 text-sm text-brand-900 outline-none focus:border-brand-500"
-                                />
-                                <select
-                                  value={item.type}
-                                  onChange={(e) => updateItem(si, ii, { type: e.target.value as CourseItemType })}
-                                  className="shrink-0 rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 outline-none focus:border-brand-500"
-                                >
-                                  {ITEM_TYPES.map((t) => (
-                                    <option key={t.value} value={t.value}>{t.label}</option>
-                                  ))}
-                                </select>
-                                <button type="button" onClick={() => removeItem(si, ii)}
-                                  className="grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-lg text-red-500 hover:bg-red-50">
-                                  <CloseIcon className="h-4 w-4" />
-                                </button>
+                              <div key={ii} className="rounded-lg border border-brand-100 bg-brand-50/40 p-2">
+                                <div className="flex items-center gap-2">
+                                  <Icon className="h-4 w-4 shrink-0 text-brand-400" />
+                                  <input
+                                    value={item.title}
+                                    onChange={(e) => updateItem(si, ii, { title: e.target.value })}
+                                    placeholder="اسم العنصر (مثال: الفيديو الأول - المتجهات)"
+                                    className="flex-1 rounded-lg border border-brand-200 px-3 py-1.5 text-sm text-brand-900 outline-none focus:border-brand-500"
+                                  />
+                                  <select
+                                    value={item.type}
+                                    onChange={(e) => updateItem(si, ii, { type: e.target.value as CourseItemType })}
+                                    className="shrink-0 rounded-lg border border-brand-200 px-2 py-1.5 text-sm text-brand-900 outline-none focus:border-brand-500"
+                                  >
+                                    {ITEM_TYPES.map((t) => (
+                                      <option key={t.value} value={t.value}>{t.label}</option>
+                                    ))}
+                                  </select>
+                                  <button type="button" onClick={() => removeItem(si, ii)}
+                                    className="grid h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-lg text-red-500 hover:bg-red-50">
+                                    <CloseIcon className="h-4 w-4" />
+                                  </button>
+                                </div>
+                                {item.type === "video" && (
+                                  <div className="mt-2 flex items-center gap-2 pr-6">
+                                    <PlayIcon className="h-3.5 w-3.5 shrink-0 text-accent-500" />
+                                    <input
+                                      dir="ltr"
+                                      value={item.url ?? ""}
+                                      onChange={(e) => updateItem(si, ii, { url: e.target.value })}
+                                      placeholder="رابط الفيديو (YouTube / Vimeo / MP4) — يظهر كمعاينة عند الضغط"
+                                      className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-1.5 text-left text-xs text-brand-900 outline-none placeholder:text-brand-900/35 focus:border-accent-400"
+                                    />
+                                  </div>
+                                )}
                               </div>
                             );
                           })}
