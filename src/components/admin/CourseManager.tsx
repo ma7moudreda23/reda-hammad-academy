@@ -289,6 +289,18 @@ export function CourseManager({
 
               <div className="space-y-4">
                 <Field label="عنوان الكورس" value={draft.title} onChange={(v) => set("title", v)} />
+                <label className="block">
+                  <Field
+                    label="رابط الكورس (بالإنجليزي)"
+                    dir="ltr"
+                    value={draft.slug ?? ""}
+                    onChange={(v) => set("slug", v)}
+                    placeholder="مثال: nesmo-math-1"
+                  />
+                  <span className="mt-1 block text-xs text-brand-900/45">
+                    استخدم حروف إنجليزية وأرقام وشرطات فقط. اتركه فاضي ليتولّد تلقائيًا من العنوان. (الروابط العربية لا تعمل)
+                  </span>
+                </label>
                 <Area label="نبذة مختصرة" rows={2} value={draft.description} onChange={(v) => set("description", v)} />
                 <Area label="تفاصيل كاملة" rows={4} value={draft.longDescription} onChange={(v) => set("longDescription", v)} />
                 <MediaUpload label="صورة الكورس" value={draft.imageUrl} onChange={(v) => set("imageUrl", v)} />

@@ -26,7 +26,10 @@ export async function PUT(
 
   const data: Record<string, unknown> = {};
   if (body.title !== undefined) data.title = body.title;
-  if (body.slug !== undefined) data.slug = slugify(body.slug);
+  if (body.slug !== undefined) {
+    const source = String(body.slug).trim() || String(body.title ?? "").trim();
+    if (source) data.slug = slugify(source);
+  }
   if (body.description !== undefined) data.description = body.description;
   if (body.longDescription !== undefined)
     data.longDescription = body.longDescription;
