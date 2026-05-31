@@ -24,6 +24,15 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 }
 
+// Uploaded files stored directly in the DB so they survive redeploys
+// (the host's filesystem is ephemeral). Served via /api/file/<id>.<ext>.
+model Upload {
+  id        Int      @id @default(autoincrement())
+  mime      String   @default("application/octet-stream")
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
 model Course {
   id              Int      @id @default(autoincrement())
   slug            String   @unique

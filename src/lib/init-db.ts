@@ -25,6 +25,13 @@ const STATEMENTS = [
     \`updatedAt\` DATETIME(3) NOT NULL,
     PRIMARY KEY (\`key\`)
   ) ${CHARSET}`,
+  `CREATE TABLE IF NOT EXISTS \`Upload\` (
+    \`id\` INT NOT NULL AUTO_INCREMENT,
+    \`mime\` VARCHAR(191) NOT NULL DEFAULT 'application/octet-stream',
+    \`data\` LONGBLOB NOT NULL,
+    \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (\`id\`)
+  ) ${CHARSET}`,
   `CREATE TABLE IF NOT EXISTS \`Course\` (
     \`id\` INT NOT NULL AUTO_INCREMENT,
     \`slug\` VARCHAR(191) NOT NULL,

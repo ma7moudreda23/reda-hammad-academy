@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "node:fs/promises";
-import path from "node:path";
 import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-const MAX_BYTES = 150 * 1024 * 1024; // 150MB
+// Stored inside the DB (survives redeploys), so keep within MySQL packet limits.
+const MAX_BYTES = 30 * 1024 * 1024; // 30MB — plenty for images/PDFs
 const ALLOWED = new Set([
   "image/jpeg",
   "image/png",
@@ -51,17 +51,21 @@ export async function POST(request: Request) {
   }
   if (file.size > MAX_BYTES) {
     return NextResponse.json(
-      { error: "حجم الملف كبير جدًا (الحد 150 ميجابايت)" },
+      { error: "حجم الملف كبير جدًا (الحد 30 ميجابايت). للفيديوهات استخدم رابط YouTube." },
       { status: 400 },
     );
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const dir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(dir, { recursive: true });
-
-  const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extFromType(file.type)}`;
-  await writeFile(path.join(dir, name), buffer);
-
-  return NextResponse.json({ url: `/uploads/${name}` });
+  try {
+    const row = await prisma.upload.create({
+      data: { mime: file.type, data: buffer },
+      select: { id: true },
+    });
+    // Extension in the URL lets the UI detect image/video/pdf for previews.
+    return NextResponse.json({ url: `/api/file/${row.id}.${extFromType(file.type)}` });
+  } catch (e) {
+    console.error("upload: DB store failed", e);
+    return NextResponse.json({ error: "تعذّر حفظ الملف" }, { status: 500 });
+  }
 }
