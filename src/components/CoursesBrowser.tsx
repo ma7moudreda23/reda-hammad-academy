@@ -10,7 +10,16 @@ const ALL = "الكل";
 export function CoursesBrowser({ courses }: { courses: CourseView[] }) {
   const [active, setActive] = useState<string>(ALL);
 
-  const tabs = [ALL, ...COURSE_CATEGORIES];
+  // Categories actually present on the courses, ordered with the default
+  // ones first, then any custom categories the admin added.
+  const present = Array.from(
+    new Set(courses.map((c) => c.category).filter((c) => c && c.trim())),
+  );
+  const ordered = [
+    ...COURSE_CATEGORIES.filter((c) => present.includes(c)),
+    ...present.filter((c) => !COURSE_CATEGORIES.includes(c)),
+  ];
+  const tabs = [ALL, ...ordered];
   const filtered =
     active === ALL ? courses : courses.filter((c) => c.category === active);
 

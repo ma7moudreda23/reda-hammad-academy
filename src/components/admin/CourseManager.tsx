@@ -87,6 +87,14 @@ export function CourseManager({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // Default categories + any custom ones already saved on existing courses.
+  const categorySuggestions = Array.from(
+    new Set([
+      ...COURSE_CATEGORIES,
+      ...courses.map((c) => c.category).filter((c) => c.trim()),
+    ]),
+  );
+
   function openNew() {
     setError("");
     setDraft(emptyDraft(defaultPlatformUrl, courses.length + 1));
@@ -302,16 +310,21 @@ export function CourseManager({
                 </div>
                 <label className="block">
                   <span className="mb-1.5 block text-sm font-bold text-brand-900">الفئة (للفلترة في صفحة الكورسات)</span>
-                  <select
+                  <input
+                    list="course-category-options"
                     value={draft.category}
                     onChange={(e) => set("category", e.target.value)}
+                    placeholder="اكتب فئة أو اختر من القائمة (مثال: مسابقات موهبة)"
                     className="w-full rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-brand-900 outline-none focus:border-brand-500"
-                  >
-                    <option value="">بدون فئة</option>
-                    {COURSE_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                  />
+                  <datalist id="course-category-options">
+                    {categorySuggestions.map((cat) => (
+                      <option key={cat} value={cat} />
                     ))}
-                  </select>
+                  </datalist>
+                  <span className="mt-1 block text-xs text-brand-900/45">
+                    اكتب أي فئة جديدة وهتتحفظ تلقائيًا وتظهر كفلتر في صفحة الكورسات. اتركها فاضية لو «بدون فئة».
+                  </span>
                 </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
                 <Field label="الترتيب" value={String(draft.sortOrder)} onChange={(v) => set("sortOrder", Number(v) || 0)} />
