@@ -2,6 +2,7 @@ import "server-only";
 import * as mariadb from "mariadb";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { slugify } from "@/lib/slug";
 
 const PLATFORM =
   process.env.NEXT_PUBLIC_PLATFORM_URL ??
@@ -139,4 +140,29 @@ export async function ensureDatabase(): Promise<{ ok: boolean; message: string }
     console.error("ensureDatabase: seed failed", e);
     return { ok: false, message: "seed failed: " + String(e) };
   }
+}
+
+// Re-slugify any course whose slug isn't ASCII-safe (e.g. old Arabic slugs that
+// 404 on the dynamic route). Idempotent: safe to run repeatedly.
+export async function normalizeCourseSlugs(): Promise<{ fixed: number }> {
+  let fixed = 0;
+  try {
+    const courses = await prisma.course.findMany({
+      select: { id: true, slug: true, title: true },
+    });
+    for (const c of courses) {
+      if (/^[a-z0-9-]+$/.test(c.slug)) continue; // already safe
+      let next = slugify(c.slug || c.title);
+      const clash = await prisma.course.findFirst({
+        where: { slug: next, id: { not: c.id } },
+        select: { id: true },
+      });
+      if (clash) next = `${next}-${c.id}`;
+      await prisma.course.update({ where: { id: c.id }, data: { slug: next } });
+      fixed++;
+    }
+  } catch (e) {
+    console.error("normalizeCourseSlugs failed", e);
+  }
+  return { fixed };
 }
