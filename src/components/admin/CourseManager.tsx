@@ -440,15 +440,17 @@ export function CourseManager({
                                     <CloseIcon className="h-4 w-4" />
                                   </button>
                                 </div>
-                                {item.type === "video" && (
-                                  <div className="mt-2 flex items-center gap-2 pr-6">
-                                    <PlayIcon className="h-3.5 w-3.5 shrink-0 text-accent-500" />
-                                    <input
-                                      dir="ltr"
+                                {item.type !== "exam" && (
+                                  <div className="mt-2 pr-6">
+                                    <MediaUpload
                                       value={item.url ?? ""}
-                                      onChange={(e) => updateItem(si, ii, { url: e.target.value })}
-                                      placeholder="رابط الفيديو (YouTube / Vimeo / MP4) — يظهر كمعاينة عند الضغط"
-                                      className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-1.5 text-left text-xs text-brand-900 outline-none placeholder:text-brand-900/35 focus:border-accent-400"
+                                      onChange={(url) => updateItem(si, ii, { url })}
+                                      accept={item.type === "video" ? "video/*" : "application/pdf,image/*"}
+                                      label={
+                                        item.type === "video"
+                                          ? "معاينة الفيديو — ارفع فيديو أو الصق رابط (YouTube / Vimeo / MP4)"
+                                          : "معاينة الملف — ارفع PDF أو صورة أو الصق رابط"
+                                      }
                                     />
                                   </div>
                                 )}

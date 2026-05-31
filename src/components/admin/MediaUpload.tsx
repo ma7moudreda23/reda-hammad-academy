@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { DeviceIcon, CloseIcon } from "@/components/icons";
+import { DeviceIcon, CloseIcon, FileIcon } from "@/components/icons";
 
 export function MediaUpload({
   value,
@@ -39,18 +39,25 @@ export function MediaUpload({
   }
 
   const isVideo = value && /\.(mp4|webm)$/i.test(value);
+  const isImage = value && /\.(jpe?g|png|webp|gif|avif)$/i.test(value);
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-bold text-brand-900">{label}</label>
+      {label && (
+        <label className="mb-1.5 block text-sm font-bold text-brand-900">{label}</label>
+      )}
       <div className="flex items-center gap-3">
         {value ? (
           <div className="relative h-20 w-28 overflow-hidden rounded-xl border border-brand-100 bg-brand-50">
             {isVideo ? (
               <video src={value} className="h-full w-full object-cover" muted />
-            ) : (
+            ) : isImage ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img src={value} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="grid h-full w-full place-items-center text-brand-500">
+                <FileIcon className="h-8 w-8" />
+              </div>
             )}
             <button
               type="button"

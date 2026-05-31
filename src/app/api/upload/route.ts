@@ -14,6 +14,7 @@ const ALLOWED = new Set([
   "image/avif",
   "video/mp4",
   "video/webm",
+  "application/pdf",
 ]);
 
 function extFromType(type: string) {
@@ -26,6 +27,7 @@ function extFromType(type: string) {
       "image/avif": "avif",
       "video/mp4": "mp4",
       "video/webm": "webm",
+      "application/pdf": "pdf",
     }[type] ?? "bin"
   );
 }
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
 
   if (!ALLOWED.has(file.type)) {
     return NextResponse.json(
-      { error: "نوع الملف غير مدعوم (صور أو فيديو فقط)" },
+      { error: "نوع الملف غير مدعوم (صور أو فيديو أو PDF)" },
       { status: 400 },
     );
   }

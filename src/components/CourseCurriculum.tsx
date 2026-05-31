@@ -17,8 +17,8 @@ const TYPE_META: Record<CourseItemType, { label: string; Icon: typeof PlayIcon }
   exam: { label: "اختبار", Icon: ExamIcon },
 };
 
-/** Turn any pasted video URL into an embeddable form. */
-function getEmbed(url: string): { kind: "iframe" | "file"; src: string } {
+/** Turn any pasted/uploaded URL into an embeddable form for the preview modal. */
+function getEmbed(url: string): { kind: "video" | "image" | "iframe"; src: string } {
   const u = url.trim();
   const yt = u.match(
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{11})/,
@@ -26,8 +26,9 @@ function getEmbed(url: string): { kind: "iframe" | "file"; src: string } {
   if (yt) return { kind: "iframe", src: `https://www.youtube.com/embed/${yt[1]}` };
   const vm = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vm) return { kind: "iframe", src: `https://player.vimeo.com/video/${vm[1]}` };
-  if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(u)) return { kind: "file", src: u };
-  return { kind: "iframe", src: u };
+  if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(u)) return { kind: "video", src: u };
+  if (/\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(u)) return { kind: "image", src: u };
+  return { kind: "iframe", src: u }; // PDF and everything else
 }
 
 export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
@@ -89,7 +90,8 @@ export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
                       {section.items.map((item, j) => {
                         const meta = TYPE_META[item.type] ?? TYPE_META.video;
                         const Icon = meta.Icon;
-                        const playable = item.type === "video" && !!item.url;
+                        const playable =
+                          (item.type === "video" || item.type === "file") && !!item.url;
                         const inner = (
                           <>
                             <span className="flex items-center gap-3">
@@ -185,14 +187,20 @@ export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
               <div className="aspect-video w-full bg-black">
                 {(() => {
                   const embed = getEmbed(preview.url);
-                  return embed.kind === "file" ? (
-                    <video
-                      src={embed.src}
-                      controls
-                      autoPlay
-                      className="h-full w-full"
-                    />
-                  ) : (
+                  if (embed.kind === "video")
+                    return (
+                      <video src={embed.src} controls autoPlay className="h-full w-full" />
+                    );
+                  if (embed.kind === "image")
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    return (
+                      <img
+                        src={embed.src}
+                        alt={preview.title || "معاينة"}
+                        className="h-full w-full object-contain"
+                      />
+                    );
+                  return (
                     <iframe
                       src={embed.src}
                       title={preview.title || "معاينة"}
