@@ -62,5 +62,5 @@ export async function getFeaturedCourses(): Promise<CourseView[]> {
 }
 
 export async function getCourseBySlug(slug: string) {
-  return prisma.course.findUnique({ where: { slug } });
+  return dbQuery(() => prisma.course.findUnique({ where: { slug } }), null);
 }
