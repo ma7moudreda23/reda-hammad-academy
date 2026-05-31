@@ -6,8 +6,9 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) throw new Error("DATABASE_URL is not set");
+  // Fall back to a dummy URL so importing this module never throws (e.g. during
+  // build). Real connection happens lazily; queries are wrapped in try/catch.
+  const url = process.env.DATABASE_URL || "mysql://user:pass@localhost:3306/db";
   const adapter = new PrismaMariaDb(url);
   return new PrismaClient({ adapter });
 }
