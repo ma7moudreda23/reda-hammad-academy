@@ -71,10 +71,12 @@ export async function ensureDatabase() {
       database: u.pathname.replace(/^\//, ""),
       connectTimeout: 8000,
     });
+    // Prevent an unhandled 'error' event from crashing the process.
+    conn.on("error", (err) => console.error("mariadb connection error", err));
     for (const sql of STATEMENTS) {
       await conn.query(sql);
     }
-    await conn.end();
+    await conn.end().catch(() => {});
   } catch (e) {
     console.error("ensureDatabase: schema creation failed", e);
     return;
