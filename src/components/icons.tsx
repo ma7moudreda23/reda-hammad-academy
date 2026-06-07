@@ -13,6 +13,16 @@ const base = {
   strokeLinejoin: "round" as const,
 };
 
+export function CardIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+    </svg>
+  );
+}
+
 export function AcademicIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

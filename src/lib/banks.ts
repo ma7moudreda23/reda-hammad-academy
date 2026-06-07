@@ -1,0 +1,50 @@
+// Client-safe payment types + Saudi bank list (no server imports).
+// Colors are approximate brand tints used for simple styled chips — these are
+// NOT official bank logos.
+
+export type BankAccount = {
+  bank: string; // a key from SAUDI_BANKS, or "other"
+  bankName?: string; // custom name when bank === "other"
+  accountName: string;
+  accountNumber: string;
+  iban: string;
+  note?: string;
+};
+
+export type PaymentContent = {
+  intro: string;
+  cardEnabled: boolean;
+  applePayEnabled: boolean;
+  banks: BankAccount[];
+};
+
+export const PAYMENT_KEY = "payment";
+
+export type BankMeta = { key: string; name: string; short: string; color: string };
+
+export const SAUDI_BANKS: BankMeta[] = [
+  { key: "rajhi", name: "مصرف الراجحي", short: "الراجحي", color: "#005EB8" },
+  { key: "alinma", name: "مصرف الإنماء", short: "الإنماء", color: "#6E2C8B" },
+  { key: "sabb", name: "البنك السعودي البريطاني (ساب)", short: "ساب", color: "#C8102E" },
+  { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B" },
+  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C" },
+  { key: "snb", name: "البنك الأهلي السعودي", short: "الأهلي", color: "#00A94F" },
+  { key: "riyad", name: "بنك الرياض", short: "الرياض", color: "#0033A0" },
+  { key: "anb", name: "البنك العربي الوطني", short: "العربي الوطني", color: "#00529B" },
+  { key: "aljazira", name: "بنك الجزيرة", short: "الجزيرة", color: "#0E7C61" },
+  { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C" },
+  { key: "alawwal", name: "البنك السعودي الأول", short: "الأول", color: "#1B3A6B" },
+  { key: "other", name: "بنك آخر", short: "بنك", color: "#343A93" },
+];
+
+export const DEFAULT_PAYMENT: PaymentContent = {
+  intro:
+    "تقدر تدفع باستخدام البطاقة البنكية أو Apple Pay، أو عن طريق التحويل البنكي على أحد الحسابات التالية. بعد التحويل تواصل معنا على واتساب لتأكيد اشتراكك.",
+  cardEnabled: true,
+  applePayEnabled: true,
+  banks: [],
+};
+
+export function getBankMeta(key: string): BankMeta {
+  return SAUDI_BANKS.find((b) => b.key === key) ?? SAUDI_BANKS[SAUDI_BANKS.length - 1];
+}

@@ -149,6 +149,26 @@ export function CourseManager({
     );
     set("curriculum", next);
   }
+  function moveSection(i: number, dir: -1 | 1) {
+    if (!draft) return;
+    const j = i + dir;
+    if (j < 0 || j >= draft.curriculum.length) return;
+    const next = [...draft.curriculum];
+    [next[i], next[j]] = [next[j], next[i]];
+    set("curriculum", next);
+  }
+  function moveItem(si: number, ii: number, dir: -1 | 1) {
+    if (!draft) return;
+    const items = draft.curriculum[si].items;
+    const j = ii + dir;
+    if (j < 0 || j >= items.length) return;
+    const nextItems = [...items];
+    [nextItems[ii], nextItems[j]] = [nextItems[j], nextItems[ii]];
+    set(
+      "curriculum",
+      draft.curriculum.map((s, x) => (x === si ? { ...s, items: nextItems } : s)),
+    );
+  }
 
   async function save() {
     if (!draft) return;
@@ -413,6 +433,18 @@ export function CourseManager({
                     {draft.curriculum.map((section, si) => (
                       <div key={si} className="rounded-xl border border-brand-100 bg-white p-3">
                         <div className="flex items-center gap-2">
+                          <div className="flex shrink-0 flex-col">
+                            <button type="button" onClick={() => moveSection(si, -1)} disabled={si === 0}
+                              title="تحريك لأعلى"
+                              className="flex h-[18px] w-7 items-center justify-center rounded-t-md border border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">
+                              ▲
+                            </button>
+                            <button type="button" onClick={() => moveSection(si, 1)} disabled={si === draft.curriculum.length - 1}
+                              title="تحريك لأسفل"
+                              className="flex h-[18px] w-7 items-center justify-center rounded-b-md border border-t-0 border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">
+                              ▼
+                            </button>
+                          </div>
                           <input
                             value={section.title}
                             onChange={(e) => updateSection(si, { title: e.target.value })}
@@ -431,6 +463,18 @@ export function CourseManager({
                             return (
                               <div key={ii} className="rounded-lg border border-brand-100 bg-brand-50/40 p-2">
                                 <div className="flex items-center gap-2">
+                                  <div className="flex shrink-0 flex-col">
+                                    <button type="button" onClick={() => moveItem(si, ii, -1)} disabled={ii === 0}
+                                      title="تحريك لأعلى"
+                                      className="flex h-3.5 w-6 items-center justify-center rounded-t border border-brand-200 text-[10px] leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">
+                                      ▲
+                                    </button>
+                                    <button type="button" onClick={() => moveItem(si, ii, 1)} disabled={ii === section.items.length - 1}
+                                      title="تحريك لأسفل"
+                                      className="flex h-3.5 w-6 items-center justify-center rounded-b border border-t-0 border-brand-200 text-[10px] leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">
+                                      ▼
+                                    </button>
+                                  </div>
                                   <Icon className="h-4 w-4 shrink-0 text-brand-400" />
                                   <input
                                     value={item.title}

@@ -10,6 +10,7 @@ import {
   LoginIcon,
   MenuIcon,
   CloseIcon,
+  CardIcon,
 } from "@/components/icons";
 import { LogoMark } from "@/components/Logo";
 
@@ -17,6 +18,7 @@ const LINKS = [
   { href: "/admin", label: "الرئيسية", icon: ChartIcon, exact: true },
   { href: "/admin/home", label: "محتوى الصفحة الرئيسية", icon: DeviceIcon },
   { href: "/admin/courses", label: "الكورسات", icon: AcademicIcon },
+  { href: "/admin/payment", label: "طرق الدفع", icon: CardIcon },
 ];
 
 export function AdminShell({
