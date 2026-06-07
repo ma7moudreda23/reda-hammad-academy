@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Field, Area, Card } from "@/components/admin/fields";
+import { Field, Card } from "@/components/admin/fields";
 import { CheckIcon, CloseIcon } from "@/components/icons";
 import { SAUDI_BANKS, type PaymentContent, type BankAccount } from "@/lib/banks";
 
@@ -58,32 +58,13 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
   return (
     <div className="pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-brand-900">طرق الدفع</h1>
+        <h1 className="text-2xl font-black text-brand-900">الحسابات البنكية</h1>
         <p className="mt-1 text-sm text-brand-900/55">
-          عدّل النص، فعّل البطاقة و Apple Pay، وأضِف الحسابات البنكية. التغييرات تظهر في صفحة «طرق الدفع».
+          أضِف حسابات التحويل البنكي هنا مرة واحدة. لا تظهر للطلاب في صفحة عامة — بل تختار في كل كورس أي الحسابات تظهر داخل صفحته.
         </p>
       </div>
 
       <div className="space-y-5">
-        <Card title="مقدمة الصفحة">
-          <Area label="نص تعريفي" rows={3} value={c.intro} onChange={(v) => setC((p) => ({ ...p, intro: v }))} />
-        </Card>
-
-        <Card title="الدفع الإلكتروني" desc="فعّل أو عطّل ظهور أيقونات الدفع.">
-          <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
-            <input type="checkbox" checked={c.cardEnabled}
-              onChange={(e) => setC((p) => ({ ...p, cardEnabled: e.target.checked }))}
-              className="h-5 w-5 cursor-pointer accent-brand-600" />
-            <span className="font-bold text-brand-900">إظهار «بطاقة بنكية» (Visa / Mastercard / mada)</span>
-          </label>
-          <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
-            <input type="checkbox" checked={c.applePayEnabled}
-              onChange={(e) => setC((p) => ({ ...p, applePayEnabled: e.target.checked }))}
-              className="h-5 w-5 cursor-pointer accent-brand-600" />
-            <span className="font-bold text-brand-900">إظهار «Apple Pay»</span>
-          </label>
-        </Card>
-
         <Card title="الحسابات البنكية" desc="أضِف حسابات التحويل البنكي. اختر البنك واكتب البيانات.">
           <div className="space-y-4">
             {c.banks.map((b, i) => (
