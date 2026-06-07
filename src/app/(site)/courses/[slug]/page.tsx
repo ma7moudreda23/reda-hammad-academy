@@ -43,7 +43,6 @@ export default async function CourseDetailPage({
   const courseBanks = course.showBankTransfer
     ? filterBanks(payment.banks, course.paymentBanks)
     : [];
-  const showPayment = !!course.paymentNote || courseBanks.length > 0;
 
   return (
     <div className="pt-28 sm:pt-32">
@@ -119,19 +118,17 @@ export default async function CourseDetailPage({
           </Reveal>
         </div>
 
-        {showPayment && (
-          <Reveal className="mt-14">
-            <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
-            <PaymentView
-              content={{
-                intro: course.paymentNote ?? "",
-                cardEnabled: false,
-                applePayEnabled: false,
-                banks: courseBanks,
-              }}
-            />
-          </Reveal>
-        )}
+        <Reveal className="mt-14">
+          <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
+          <PaymentView
+            content={{
+              intro: course.paymentNote ?? "",
+              cardEnabled: true,
+              applePayEnabled: true,
+              banks: courseBanks,
+            }}
+          />
+        </Reveal>
 
         {course.longDescription && (
           <Reveal className="mt-14">
