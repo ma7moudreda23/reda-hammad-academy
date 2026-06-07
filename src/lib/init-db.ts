@@ -48,6 +48,7 @@ const STATEMENTS = [
     \`category\` VARCHAR(191) NOT NULL DEFAULT '',
     \`paymentNote\` TEXT NULL,
     \`showBankTransfer\` TINYINT(1) NOT NULL DEFAULT 0,
+    \`paymentBanks\` TEXT NULL,
     \`isPublished\` TINYINT(1) NOT NULL DEFAULT 1,
     \`isFeatured\` TINYINT(1) NOT NULL DEFAULT 0,
     \`sortOrder\` INT NOT NULL DEFAULT 0,
@@ -59,6 +60,7 @@ const STATEMENTS = [
   // Add new columns to an already-created Course table (MariaDB supports IF NOT EXISTS).
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentNote` TEXT NULL",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `showBankTransfer` TINYINT(1) NOT NULL DEFAULT 0",
+  "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentBanks` TEXT NULL",
 ];
 
 export async function ensureDatabase(): Promise<{ ok: boolean; message: string }> {

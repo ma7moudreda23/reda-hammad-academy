@@ -49,6 +49,7 @@ model Course {
   category        String   @default("")
   paymentNote     String?  @db.Text
   showBankTransfer Boolean  @default(false)
+  paymentBanks    String?  @db.Text
   isPublished     Boolean  @default(true)
   isFeatured      Boolean  @default(false)
   sortOrder       Int      @default(0)

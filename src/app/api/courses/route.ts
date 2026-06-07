@@ -47,6 +47,7 @@ export async function POST(request: Request) {
       category: body.category ?? "",
       paymentNote: body.paymentNote ?? "",
       showBankTransfer: body.showBankTransfer ?? false,
+      paymentBanks: body.paymentBanks ?? "all",
       platformUrl: body.platformUrl || PLATFORM_URL,
       isPublished: body.isPublished ?? true,
       isFeatured: body.isFeatured ?? false,

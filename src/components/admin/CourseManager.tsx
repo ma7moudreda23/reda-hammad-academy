@@ -19,6 +19,12 @@ import {
   type CourseItemType,
 } from "@/lib/curriculum";
 import { COURSE_CATEGORIES } from "@/lib/site";
+import {
+  bankKey,
+  getBankMeta,
+  parseSelectedBanks,
+  type BankAccount,
+} from "@/lib/banks";
 
 export type AdminCourse = {
   id: number;
@@ -35,6 +41,7 @@ export type AdminCourse = {
   category: string;
   paymentNote: string;
   showBankTransfer: boolean;
+  paymentBanks: string;
   platformUrl: string;
   isPublished: boolean;
   isFeatured: boolean;
@@ -72,6 +79,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     category: "",
     paymentNote: "",
     showBankTransfer: false,
+    paymentBanks: "all",
     platformUrl,
     isPublished: true,
     isFeatured: false,
@@ -82,9 +90,11 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
 export function CourseManager({
   initial,
   defaultPlatformUrl,
+  banks = [],
 }: {
   initial: AdminCourse[];
   defaultPlatformUrl: string;
+  banks?: BankAccount[];
 }) {
   const [courses, setCourses] = useState<AdminCourse[]>(initial);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -172,6 +182,24 @@ export function CourseManager({
       "curriculum",
       draft.curriculum.map((s, x) => (x === si ? { ...s, items: nextItems } : s)),
     );
+  }
+
+  /* ---- per-course bank selection ---- */
+  const allBankKeys = banks.map((b, i) => bankKey(b, i));
+  function isBankSelected(key: string): boolean {
+    const sel = parseSelectedBanks(draft?.paymentBanks ?? "all");
+    return sel === "all" || sel.includes(key);
+  }
+  function toggleBank(key: string, checked: boolean) {
+    if (!draft) return;
+    const sel = parseSelectedBanks(draft.paymentBanks);
+    let arr = sel === "all" ? [...allBankKeys] : [...sel];
+    if (checked) {
+      if (!arr.includes(key)) arr.push(key);
+    } else {
+      arr = arr.filter((k) => k !== key);
+    }
+    set("paymentBanks", arr.length === allBankKeys.length ? "all" : JSON.stringify(arr));
   }
 
   async function save() {
@@ -383,9 +411,53 @@ export function CourseManager({
                       onChange={(e) => set("showBankTransfer", e.target.checked)}
                       className="h-5 w-5 cursor-pointer accent-brand-600" />
                     <span className="text-sm font-bold text-brand-900">
-                      إظهار خيار التحويل البنكي (الحسابات من صفحة «طرق الدفع»)
+                      إظهار خيار التحويل البنكي في صفحة الكورس
                     </span>
                   </label>
+
+                  {draft.showBankTransfer && (
+                    <div className="mt-3 rounded-xl border border-brand-100 bg-white p-3">
+                      {banks.length === 0 ? (
+                        <p className="text-sm text-brand-900/55">
+                          لا توجد حسابات بنكية بعد. أضِفها من صفحة «طرق الدفع» في القائمة.
+                        </p>
+                      ) : (
+                        <>
+                          <p className="mb-2 text-sm font-bold text-brand-900">الحسابات التي تظهر في هذا الكورس:</p>
+                          <label className="flex items-center gap-2 rounded-lg bg-brand-50/60 px-3 py-2">
+                            <input
+                              type="checkbox"
+                              checked={parseSelectedBanks(draft.paymentBanks) === "all"}
+                              onChange={(e) => set("paymentBanks", e.target.checked ? "all" : "[]")}
+                              className="h-4 w-4 cursor-pointer accent-brand-600"
+                            />
+                            <span className="text-sm font-bold text-brand-900">كل الحسابات</span>
+                          </label>
+                          <div className="mt-1 space-y-1">
+                            {banks.map((b, i) => {
+                              const key = bankKey(b, i);
+                              const meta = getBankMeta(b.bank);
+                              const label = b.bank === "other" && b.bankName ? b.bankName : meta.name;
+                              return (
+                                <label key={key} className="flex items-center gap-2 px-3 py-1.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={isBankSelected(key)}
+                                    onChange={(e) => toggleBank(key, e.target.checked)}
+                                    className="h-4 w-4 cursor-pointer accent-brand-600"
+                                  />
+                                  <span className="inline-block h-3 w-3 rounded-sm" style={{ background: meta.color }} />
+                                  <span className="text-sm text-brand-900/80">
+                                    {label}{b.accountName ? ` — ${b.accountName}` : ""}
+                                  </span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">

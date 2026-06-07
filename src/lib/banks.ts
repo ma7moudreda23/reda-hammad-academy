@@ -48,3 +48,25 @@ export const DEFAULT_PAYMENT: PaymentContent = {
 export function getBankMeta(key: string): BankMeta {
   return SAUDI_BANKS.find((b) => b.key === key) ?? SAUDI_BANKS[SAUDI_BANKS.length - 1];
 }
+
+// Stable-ish key to reference a saved bank account from a course.
+export function bankKey(b: BankAccount, index: number): string {
+  return (b.iban && b.iban.trim()) || (b.accountNumber && b.accountNumber.trim()) || `bank-${index}`;
+}
+
+// A course stores either "all" or a JSON array of bank keys.
+export function parseSelectedBanks(value: string | null | undefined): "all" | string[] {
+  if (!value || value === "all") return "all";
+  try {
+    const a = JSON.parse(value);
+    return Array.isArray(a) ? a.map(String) : "all";
+  } catch {
+    return "all";
+  }
+}
+
+export function filterBanks(banks: BankAccount[], value: string | null | undefined): BankAccount[] {
+  const sel = parseSelectedBanks(value);
+  if (sel === "all") return banks;
+  return banks.filter((b, i) => sel.includes(bankKey(b, i)));
+}

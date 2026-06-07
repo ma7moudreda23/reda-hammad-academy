@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourseBySlug, parseCurriculum, parseStringList } from "@/lib/courses";
 import { getPaymentContent } from "@/lib/payment";
+import { filterBanks } from "@/lib/banks";
 import { PLATFORM_URL } from "@/lib/site";
 import { Reveal } from "@/components/motion";
 import { AcademicIcon, ArrowIcon, CheckIcon } from "@/components/icons";
@@ -39,7 +40,9 @@ export default async function CourseDetailPage({
   const features = parseStringList(course.features);
 
   const payment = await getPaymentContent();
-  const courseBanks = course.showBankTransfer ? payment.banks : [];
+  const courseBanks = course.showBankTransfer
+    ? filterBanks(payment.banks, course.paymentBanks)
+    : [];
   const showPayment = !!course.paymentNote || courseBanks.length > 0;
 
   return (
