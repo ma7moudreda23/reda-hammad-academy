@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourseBySlug, parseCurriculum, parseStringList } from "@/lib/courses";
+import { getPaymentContent } from "@/lib/payment";
 import { PLATFORM_URL } from "@/lib/site";
 import { Reveal } from "@/components/motion";
 import { AcademicIcon, ArrowIcon, CheckIcon } from "@/components/icons";
 import { CourseCurriculum } from "@/components/CourseCurriculum";
+import { PaymentView } from "@/components/PaymentView";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +37,10 @@ export default async function CourseDetailPage({
   const link = course.platformUrl || PLATFORM_URL;
   const curriculum = parseCurriculum(course.curriculum);
   const features = parseStringList(course.features);
+
+  const payment = await getPaymentContent();
+  const courseBanks = course.showBankTransfer ? payment.banks : [];
+  const showPayment = !!course.paymentNote || courseBanks.length > 0;
 
   return (
     <div className="pt-28 sm:pt-32">
@@ -109,6 +115,20 @@ export default async function CourseDetailPage({
             )}
           </Reveal>
         </div>
+
+        {showPayment && (
+          <Reveal className="mt-14">
+            <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
+            <PaymentView
+              content={{
+                intro: course.paymentNote ?? "",
+                cardEnabled: false,
+                applePayEnabled: false,
+                banks: courseBanks,
+              }}
+            />
+          </Reveal>
+        )}
 
         {course.longDescription && (
           <Reveal className="mt-14">

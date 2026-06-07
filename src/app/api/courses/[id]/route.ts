@@ -48,6 +48,8 @@ export async function PUT(
   if (body.currency !== undefined) data.currency = body.currency;
   if (body.badge !== undefined) data.badge = body.badge;
   if (body.category !== undefined) data.category = body.category;
+  if (body.paymentNote !== undefined) data.paymentNote = body.paymentNote;
+  if (body.showBankTransfer !== undefined) data.showBankTransfer = body.showBankTransfer;
   if (body.platformUrl !== undefined) data.platformUrl = body.platformUrl;
   if (body.isPublished !== undefined) data.isPublished = body.isPublished;
   if (body.isFeatured !== undefined) data.isFeatured = body.isFeatured;

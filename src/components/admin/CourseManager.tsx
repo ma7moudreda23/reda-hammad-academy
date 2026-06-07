@@ -33,6 +33,8 @@ export type AdminCourse = {
   currency: string;
   badge: string;
   category: string;
+  paymentNote: string;
+  showBankTransfer: boolean;
   platformUrl: string;
   isPublished: boolean;
   isFeatured: boolean;
@@ -68,6 +70,8 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     currency: "ريال سعودي",
     badge: "",
     category: "",
+    paymentNote: "",
+    showBankTransfer: false,
     platformUrl,
     isPublished: true,
     isFeatured: false,
@@ -360,6 +364,29 @@ export function CourseManager({
                 </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
                 <Field label="الترتيب" value={String(draft.sortOrder)} onChange={(v) => set("sortOrder", Number(v) || 0)} />
+
+                {/* Payment options for this course */}
+                <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">
+                  <h3 className="font-extrabold text-brand-900">طرق الدفع لهذا الكورس</h3>
+                  <p className="mb-3 text-xs text-brand-900/55">
+                    يظهر للطالب في صفحة الكورس بجانب زر «اشترك على المنصة».
+                  </p>
+                  <Area
+                    label="نص طرق الدفع (اختياري)"
+                    rows={2}
+                    value={draft.paymentNote}
+                    onChange={(v) => set("paymentNote", v)}
+                    placeholder="مثال: تقدر تدفع بالبطاقة على المنصة، أو تحويل بنكي وترسل الإيصال على واتساب."
+                  />
+                  <label className="mt-3 flex items-center gap-3 rounded-xl border border-brand-200 bg-white px-4 py-3">
+                    <input type="checkbox" checked={draft.showBankTransfer}
+                      onChange={(e) => set("showBankTransfer", e.target.checked)}
+                      className="h-5 w-5 cursor-pointer accent-brand-600" />
+                    <span className="text-sm font-bold text-brand-900">
+                      إظهار خيار التحويل البنكي (الحسابات من صفحة «طرق الدفع»)
+                    </span>
+                  </label>
+                </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
                     <input type="checkbox" checked={draft.isPublished}

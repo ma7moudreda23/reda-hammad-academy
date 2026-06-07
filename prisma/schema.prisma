@@ -47,6 +47,8 @@ model Course {
   platformUrl     String   @default("") @db.Text
   badge           String   @default("")
   category        String   @default("")
+  paymentNote     String?  @db.Text
+  showBankTransfer Boolean  @default(false)
   isPublished     Boolean  @default(true)
   isFeatured      Boolean  @default(false)
   sortOrder       Int      @default(0)

@@ -45,6 +45,8 @@ export async function POST(request: Request) {
       currency: body.currency ?? "ريال سعودي",
       badge: body.badge ?? "",
       category: body.category ?? "",
+      paymentNote: body.paymentNote ?? "",
+      showBankTransfer: body.showBankTransfer ?? false,
       platformUrl: body.platformUrl || PLATFORM_URL,
       isPublished: body.isPublished ?? true,
       isFeatured: body.isFeatured ?? false,
