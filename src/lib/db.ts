@@ -22,6 +22,9 @@ function createClient() {
       database: u.pathname.replace(/^\//, ""),
       connectTimeout: 2500,
       acquireTimeout: 2500,
+      // Keep the pool small — the shared host limits total processes/threads.
+      connectionLimit: 3,
+      idleTimeout: 30,
     });
   } catch {
     adapter = new PrismaMariaDb(url);
