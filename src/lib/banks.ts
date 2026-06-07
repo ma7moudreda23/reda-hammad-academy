@@ -8,6 +8,7 @@ export type BankAccount = {
   accountName: string;
   accountNumber: string;
   iban: string;
+  phone?: string; // mobile number (e.g. for STC Pay)
   note?: string;
 };
 

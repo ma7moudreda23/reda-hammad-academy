@@ -96,6 +96,13 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
                     <Field label="اسم البنك" value={b.bankName ?? ""} onChange={(v) => updateBank(i, { bankName: v })} placeholder="اكتب اسم البنك" />
                   )}
                   <Field label="اسم صاحب الحساب" value={b.accountName} onChange={(v) => updateBank(i, { accountName: v })} />
+                  <Field
+                    label="رقم الجوال (لـ STC Pay)"
+                    dir="ltr"
+                    value={b.phone ?? ""}
+                    onChange={(v) => updateBank(i, { phone: v })}
+                    placeholder="05XXXXXXXX"
+                  />
                   <div className="grid gap-3 sm:grid-cols-2">
                     <Field label="رقم الحساب" dir="ltr" value={b.accountNumber} onChange={(v) => updateBank(i, { accountNumber: v })} />
                     <Field label="الآيبان (IBAN)" dir="ltr" value={b.iban} onChange={(v) => updateBank(i, { iban: v })} placeholder="SA00 0000 0000 0000 0000 0000" />
