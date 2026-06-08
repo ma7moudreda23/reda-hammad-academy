@@ -21,6 +21,17 @@ function BankChip({ bankKey, name }: { bankKey: string; name?: string }) {
   );
 }
 
+function PayBadge({ label, bg }: { label: string; bg: string }) {
+  return (
+    <span
+      className="inline-flex h-7 items-center justify-center rounded-md px-2.5 text-xs font-black tracking-wide text-white shadow-sm"
+      style={{ background: bg }}
+    >
+      {label}
+    </span>
+  );
+}
+
 function CardIcon() {
   return (
     <svg viewBox="0 0 48 32" className="h-7 w-10" aria-hidden>
@@ -73,13 +84,17 @@ export function PaymentView({ content }: { content: PaymentContent }) {
               <div className="flex items-center gap-3 rounded-2xl border border-brand-100 bg-white px-5 py-3.5 shadow-sm">
                 <CardIcon />
                 <span className="font-extrabold text-brand-900">بطاقة بنكية</span>
-                <span className="text-xs font-semibold text-brand-900/45">Visa · Mastercard · mada</span>
+                <span className="flex items-center gap-1.5">
+                  <PayBadge label="VISA" bg="#1A1F71" />
+                  <PayBadge label="Mastercard" bg="#23272F" />
+                  <PayBadge label="mada" bg="#159A8B" />
+                </span>
               </div>
             )}
             {content.applePayEnabled && (
-              <div className="flex items-center gap-2 rounded-2xl border border-brand-100 bg-white px-5 py-3.5 shadow-sm">
-                <span className="rounded-lg bg-black px-3 py-1.5 text-sm font-extrabold text-white"> Pay</span>
-                <span className="font-extrabold text-brand-900">Apple Pay</span>
+              <div className="flex items-center gap-2.5 rounded-2xl border border-brand-100 bg-white px-5 py-3.5 shadow-sm">
+                <PayBadge label="Apple Pay" bg="#000000" />
+                <span className="font-extrabold text-brand-900">متاح</span>
               </div>
             )}
           </div>
