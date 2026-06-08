@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { Field, Card } from "@/components/admin/fields";
 import { MediaUpload } from "@/components/admin/MediaUpload";
-import { CheckIcon, CloseIcon } from "@/components/icons";
-import { SAUDI_BANKS, bankLogo, type PaymentContent, type BankAccount } from "@/lib/banks";
+import { CheckIcon, CloseIcon, ChevronIcon } from "@/components/icons";
+import { SAUDI_BANKS, bankLogo, bankLabel, type PaymentContent, type BankAccount } from "@/lib/banks";
 
 export function PaymentEditor({ initial }: { initial: PaymentContent }) {
   const [c, setC] = useState<PaymentContent>(initial);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [openBank, setOpenBank] = useState<number | null>(null);
 
   function setBanks(banks: BankAccount[]) {
     setC((p) => ({ ...p, banks }));
@@ -22,9 +23,11 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
       ...c.banks,
       { bank: "rajhi", accountName: "", accountNumber: "", iban: "", note: "" },
     ]);
+    setOpenBank(c.banks.length); // open the new one for editing
   }
   function removeBank(i: number) {
     setBanks(c.banks.filter((_, x) => x !== i));
+    setOpenBank(null);
   }
   function moveBank(i: number, dir: -1 | 1) {
     const j = i + dir;
@@ -68,9 +71,11 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
       <div className="space-y-5">
         <Card title="الحسابات البنكية" desc="أضِف حسابات التحويل البنكي. اختر البنك واكتب البيانات.">
           <div className="space-y-4">
-            {c.banks.map((b, i) => (
-              <div key={i} className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">
-                <div className="mb-3 flex items-center gap-2">
+            {c.banks.map((b, i) => {
+              const open = openBank === i;
+              return (
+              <div key={i} className="rounded-xl border border-brand-100 bg-brand-50/40 p-3">
+                <div className="flex items-center gap-2">
                   <div className="flex shrink-0 flex-col">
                     <button type="button" onClick={() => moveBank(i, -1)} disabled={i === 0}
                       className="flex h-[18px] w-7 items-center justify-center rounded-t-md border border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">▲</button>
@@ -83,49 +88,67 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
                       <img src={bankLogo(b)} alt="" className="block h-full w-full object-contain" />
                     </span>
                   )}
-                  <select
-                    value={b.bank}
-                    onChange={(e) => updateBank(i, { bank: e.target.value })}
-                    className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 font-bold text-brand-900 outline-none focus:border-brand-500"
-                  >
-                    {SAUDI_BANKS.map((bk) => (
-                      <option key={bk.key} value={bk.key}>{bk.name}</option>
-                    ))}
-                  </select>
+                  {open ? (
+                    <select
+                      value={b.bank}
+                      onChange={(e) => updateBank(i, { bank: e.target.value })}
+                      className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 font-bold text-brand-900 outline-none focus:border-brand-500"
+                    >
+                      {SAUDI_BANKS.map((bk) => (
+                        <option key={bk.key} value={bk.key}>{bk.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <button type="button" onClick={() => setOpenBank(i)}
+                      className="flex flex-1 items-center gap-2 rounded-lg px-2 py-2 text-right hover:bg-white">
+                      <span className="font-bold text-brand-900">{bankLabel(b)}</span>
+                      {b.accountName && (
+                        <span className="truncate text-xs font-semibold text-brand-900/45">— {b.accountName}</span>
+                      )}
+                    </button>
+                  )}
+                  <button type="button" onClick={() => setOpenBank(open ? null : i)}
+                    title={open ? "طي" : "فتح للتعديل"}
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-brand-200 text-brand-600 hover:bg-white">
+                    <ChevronIcon className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+                  </button>
                   <button type="button" onClick={() => removeBank(i)}
                     className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50">
                     <CloseIcon className="h-4 w-4" />
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  {b.bank === "other" && (
-                    <>
-                      <Field label="اسم البنك" value={b.bankName ?? ""} onChange={(v) => updateBank(i, { bankName: v })} placeholder="اكتب اسم البنك" />
-                      <MediaUpload
-                        label="شعار البنك (ارفع صورة SVG / PNG)"
-                        accept="image/svg+xml,image/png,image/*"
-                        value={b.logoUrl ?? ""}
-                        onChange={(v) => updateBank(i, { logoUrl: v })}
-                      />
-                    </>
-                  )}
-                  <Field label="اسم صاحب الحساب" value={b.accountName} onChange={(v) => updateBank(i, { accountName: v })} />
-                  <Field
-                    label="رقم الجوال (للتحويل — STC Pay أو تحويل بنكي)"
-                    dir="ltr"
-                    value={b.phone ?? ""}
-                    onChange={(v) => updateBank(i, { phone: v })}
-                    placeholder="05XXXXXXXX"
-                  />
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="رقم الحساب" dir="ltr" value={b.accountNumber} onChange={(v) => updateBank(i, { accountNumber: v })} />
-                    <Field label="الآيبان (IBAN)" dir="ltr" value={b.iban} onChange={(v) => updateBank(i, { iban: v })} placeholder="SA00 0000 0000 0000 0000 0000" />
+                {open && (
+                  <div className="mt-3 space-y-3">
+                    {b.bank === "other" && (
+                      <>
+                        <Field label="اسم البنك" value={b.bankName ?? ""} onChange={(v) => updateBank(i, { bankName: v })} placeholder="اكتب اسم البنك" />
+                        <MediaUpload
+                          label="شعار البنك (ارفع صورة SVG / PNG)"
+                          accept="image/svg+xml,image/png,image/*"
+                          value={b.logoUrl ?? ""}
+                          onChange={(v) => updateBank(i, { logoUrl: v })}
+                        />
+                      </>
+                    )}
+                    <Field label="اسم صاحب الحساب" value={b.accountName} onChange={(v) => updateBank(i, { accountName: v })} />
+                    <Field
+                      label="رقم الجوال (للتحويل — STC Pay أو تحويل بنكي)"
+                      dir="ltr"
+                      value={b.phone ?? ""}
+                      onChange={(v) => updateBank(i, { phone: v })}
+                      placeholder="05XXXXXXXX"
+                    />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="رقم الحساب" dir="ltr" value={b.accountNumber} onChange={(v) => updateBank(i, { accountNumber: v })} />
+                      <Field label="الآيبان (IBAN)" dir="ltr" value={b.iban} onChange={(v) => updateBank(i, { iban: v })} placeholder="SA00 0000 0000 0000 0000 0000" />
+                    </div>
+                    <Field label="ملاحظة (اختياري)" value={b.note ?? ""} onChange={(v) => updateBank(i, { note: v })} placeholder="مثال: أرسل الإيصال على واتساب بعد التحويل" />
                   </div>
-                  <Field label="ملاحظة (اختياري)" value={b.note ?? ""} onChange={(v) => updateBank(i, { note: v })} placeholder="مثال: أرسل الإيصال على واتساب بعد التحويل" />
-                </div>
+                )}
               </div>
-            ))}
+              );
+            })}
             {c.banks.length === 0 && (
               <p className="rounded-lg bg-white px-3 py-3 text-center text-sm text-brand-900/45">
                 لا توجد حسابات بنكية — اضغط «+ إضافة حساب».
