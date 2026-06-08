@@ -78,9 +78,9 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
                       className="flex h-[18px] w-7 items-center justify-center rounded-b-md border border-t-0 border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">▼</button>
                   </div>
                   {bankLogo(b) && (
-                    <span className="grid h-9 w-14 shrink-0 place-items-center rounded-lg border border-brand-100 bg-white p-1">
+                    <span className="flex h-9 w-14 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-white p-1">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={bankLogo(b)} alt="" className="max-h-full max-w-full object-contain" />
+                      <img src={bankLogo(b)} alt="" className="block h-full w-full object-contain" />
                     </span>
                   )}
                   <select
