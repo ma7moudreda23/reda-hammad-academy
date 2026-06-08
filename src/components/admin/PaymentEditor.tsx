@@ -97,7 +97,7 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
                   )}
                   <Field label="اسم صاحب الحساب" value={b.accountName} onChange={(v) => updateBank(i, { accountName: v })} />
                   <Field
-                    label="رقم الجوال (لـ STC Pay)"
+                    label="رقم الجوال (للتحويل — STC Pay أو تحويل بنكي)"
                     dir="ltr"
                     value={b.phone ?? ""}
                     onChange={(v) => updateBank(i, { phone: v })}

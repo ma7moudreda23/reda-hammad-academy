@@ -131,7 +131,7 @@ export function PaymentView({ content }: { content: PaymentContent }) {
                       <p className="font-bold text-brand-900">{b.accountName}</p>
                     </div>
                   )}
-                  <CopyRow label="رقم الجوال (STC Pay)" value={b.phone ?? ""} />
+                  <CopyRow label="رقم الجوال (للتحويل)" value={b.phone ?? ""} />
                   <CopyRow label="رقم الحساب" value={b.accountNumber} />
                   <CopyRow label="الآيبان (IBAN)" value={b.iban} />
                   {b.note && (
