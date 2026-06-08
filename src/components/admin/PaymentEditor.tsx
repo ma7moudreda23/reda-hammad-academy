@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Field, Card } from "@/components/admin/fields";
+import { MediaUpload } from "@/components/admin/MediaUpload";
 import { CheckIcon, CloseIcon } from "@/components/icons";
-import { SAUDI_BANKS, type PaymentContent, type BankAccount } from "@/lib/banks";
+import { SAUDI_BANKS, bankLogo, type PaymentContent, type BankAccount } from "@/lib/banks";
 
 export function PaymentEditor({ initial }: { initial: PaymentContent }) {
   const [c, setC] = useState<PaymentContent>(initial);
@@ -76,6 +77,10 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
                     <button type="button" onClick={() => moveBank(i, 1)} disabled={i === c.banks.length - 1}
                       className="flex h-[18px] w-7 items-center justify-center rounded-b-md border border-t-0 border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">▼</button>
                   </div>
+                  {bankLogo(b) && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={bankLogo(b)} alt="" className="h-8 w-12 shrink-0 rounded bg-white object-contain p-0.5" />
+                  )}
                   <select
                     value={b.bank}
                     onChange={(e) => updateBank(i, { bank: e.target.value })}
@@ -93,7 +98,15 @@ export function PaymentEditor({ initial }: { initial: PaymentContent }) {
 
                 <div className="space-y-3">
                   {b.bank === "other" && (
-                    <Field label="اسم البنك" value={b.bankName ?? ""} onChange={(v) => updateBank(i, { bankName: v })} placeholder="اكتب اسم البنك" />
+                    <>
+                      <Field label="اسم البنك" value={b.bankName ?? ""} onChange={(v) => updateBank(i, { bankName: v })} placeholder="اكتب اسم البنك" />
+                      <MediaUpload
+                        label="شعار البنك (ارفع صورة SVG / PNG)"
+                        accept="image/svg+xml,image/png,image/*"
+                        value={b.logoUrl ?? ""}
+                        onChange={(v) => updateBank(i, { logoUrl: v })}
+                      />
+                    </>
                   )}
                   <Field label="اسم صاحب الحساب" value={b.accountName} onChange={(v) => updateBank(i, { accountName: v })} />
                   <Field

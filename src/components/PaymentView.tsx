@@ -1,21 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { getBankMeta, type PaymentContent } from "@/lib/banks";
+import { getBankMeta, bankLogo, bankLabel, type PaymentContent, type BankAccount } from "@/lib/banks";
 import { CheckIcon } from "@/components/icons";
 
-function BankChip({ bankKey, name }: { bankKey: string; name?: string }) {
-  const meta = getBankMeta(bankKey);
-  const label = bankKey === "other" && name ? name : meta.name;
-  const mark = (bankKey === "other" && name ? name : meta.short).trim().charAt(0);
+function BankChip({ bank }: { bank: BankAccount }) {
+  const meta = getBankMeta(bank.bank);
+  const label = bankLabel(bank);
+  const logo = bankLogo(bank);
+  const mark = (meta.short || label).trim().charAt(0);
   return (
     <div className="flex items-center gap-3">
-      <span
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-base font-black text-white shadow-sm"
-        style={{ background: meta.color }}
-      >
-        {mark}
-      </span>
+      {logo ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={logo}
+          alt={label}
+          className="h-11 w-16 shrink-0 rounded-xl bg-white object-contain p-1 ring-1 ring-brand-100"
+        />
+      ) : (
+        <span
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-base font-black text-white shadow-sm"
+          style={{ background: meta.color }}
+        >
+          {mark}
+        </span>
+      )}
       <span className="font-extrabold text-brand-900">{label}</span>
     </div>
   );
@@ -123,7 +133,7 @@ export function PaymentView({ content }: { content: PaymentContent }) {
           <div className="grid gap-4 sm:grid-cols-2">
             {content.banks.map((b, i) => (
               <div key={i} className="rounded-card border border-brand-100 bg-white p-5 shadow-sm">
-                <BankChip bankKey={b.bank} name={b.bankName} />
+                <BankChip bank={b} />
                 <div className="mt-4 space-y-2">
                   {b.accountName && (
                     <div className="flex items-center justify-between gap-3 rounded-xl bg-brand-50/70 px-4 py-2.5">

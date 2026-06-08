@@ -5,10 +5,11 @@
 export type BankAccount = {
   bank: string; // a key from SAUDI_BANKS, or "other"
   bankName?: string; // custom name when bank === "other"
+  logoUrl?: string; // custom uploaded logo when bank === "other"
   accountName: string;
   accountNumber: string;
   iban: string;
-  phone?: string; // mobile number (e.g. for STC Pay)
+  phone?: string; // mobile number (for transfer)
   note?: string;
 };
 
@@ -21,25 +22,21 @@ export type PaymentContent = {
 
 export const PAYMENT_KEY = "payment";
 
-export type BankMeta = { key: string; name: string; short: string; color: string };
+export type BankMeta = { key: string; name: string; short: string; color: string; logo?: string };
 
+// Only banks/wallets that have an uploaded logo (in /public/banks) + "other".
 export const SAUDI_BANKS: BankMeta[] = [
-  { key: "rajhi", name: "مصرف الراجحي", short: "الراجحي", color: "#005EB8" },
-  { key: "alinma", name: "مصرف الإنماء", short: "الإنماء", color: "#6E2C8B" },
-  { key: "sabb", name: "البنك السعودي البريطاني (ساب)", short: "ساب", color: "#C8102E" },
-  { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B" },
-  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C" },
-  { key: "urpay", name: "URPay", short: "URPay", color: "#3A2D7D" },
-  { key: "barq", name: "برق (Barq)", short: "برق", color: "#6C2BD9" },
-  { key: "d360", name: "بنك D360", short: "D360", color: "#00B8A9" },
-  { key: "mobilypay", name: "Mobily Pay", short: "Mobily Pay", color: "#7B2D8E" },
-  { key: "alinmapay", name: "Alinma Pay", short: "Alinma Pay", color: "#8E44AD" },
-  { key: "snb", name: "البنك الأهلي السعودي", short: "الأهلي", color: "#00A94F" },
-  { key: "riyad", name: "بنك الرياض", short: "الرياض", color: "#0033A0" },
-  { key: "anb", name: "البنك العربي الوطني", short: "العربي الوطني", color: "#00529B" },
-  { key: "aljazira", name: "بنك الجزيرة", short: "الجزيرة", color: "#0E7C61" },
-  { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C" },
-  { key: "alawwal", name: "البنك السعودي الأول", short: "الأول", color: "#1B3A6B" },
+  { key: "rajhi", name: "مصرف الراجحي", short: "الراجحي", color: "#005EB8", logo: "/banks/rajhi.png" },
+  { key: "alinma", name: "مصرف الإنماء", short: "الإنماء", color: "#6E2C8B", logo: "/banks/alinma.svg" },
+  { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B", logo: "/banks/albilad.svg" },
+  { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C", logo: "/banks/saudifransi.svg" },
+  { key: "alawwal", name: "البنك الأول", short: "الأول", color: "#1B3A6B", logo: "/banks/alawwal.svg" },
+  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C", logo: "/banks/stcpay.svg" },
+  { key: "urpay", name: "URPay", short: "URPay", color: "#3A2D7D", logo: "/banks/urpay.svg" },
+  { key: "barq", name: "برق (Barq)", short: "برق", color: "#6C2BD9", logo: "/banks/barq.png" },
+  { key: "d360", name: "بنك D360", short: "D360", color: "#00B8A9", logo: "/banks/d360.svg" },
+  { key: "mobilypay", name: "Mobily Pay", short: "Mobily Pay", color: "#7B2D8E", logo: "/banks/mobilypay.svg" },
+  { key: "alinmapay", name: "Alinma Pay", short: "Alinma Pay", color: "#8E44AD", logo: "/banks/alinmapay.svg" },
   { key: "other", name: "بنك آخر", short: "بنك", color: "#343A93" },
 ];
 
@@ -53,6 +50,18 @@ export const DEFAULT_PAYMENT: PaymentContent = {
 
 export function getBankMeta(key: string): BankMeta {
   return SAUDI_BANKS.find((b) => b.key === key) ?? SAUDI_BANKS[SAUDI_BANKS.length - 1];
+}
+
+// Logo URL for a saved account: the built-in bank logo, or the custom uploaded
+// one for "بنك آخر".
+export function bankLogo(b: BankAccount): string {
+  if (b.bank === "other") return b.logoUrl ?? "";
+  return getBankMeta(b.bank).logo ?? "";
+}
+
+export function bankLabel(b: BankAccount): string {
+  if (b.bank === "other") return b.bankName?.trim() || "بنك آخر";
+  return getBankMeta(b.bank).name;
 }
 
 // Stable-ish key to reference a saved bank account from a course.

@@ -15,6 +15,7 @@ const ALLOWED = new Set([
   "video/mp4",
   "video/webm",
   "application/pdf",
+  "image/svg+xml",
 ]);
 
 function extFromType(type: string) {
@@ -28,6 +29,7 @@ function extFromType(type: string) {
       "video/mp4": "mp4",
       "video/webm": "webm",
       "application/pdf": "pdf",
+      "image/svg+xml": "svg",
     }[type] ?? "bin"
   );
 }
