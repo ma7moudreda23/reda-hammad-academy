@@ -27,16 +27,16 @@ export type BankMeta = { key: string; name: string; short: string; color: string
 // Only banks/wallets that have an uploaded logo (in /public/banks) + "other".
 export const SAUDI_BANKS: BankMeta[] = [
   { key: "rajhi", name: "مصرف الراجحي", short: "الراجحي", color: "#005EB8", logo: "/banks/rajhi.png" },
-  { key: "alinma", name: "مصرف الإنماء", short: "الإنماء", color: "#6E2C8B", logo: "/banks/alinma.svg" },
-  { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B", logo: "/banks/albilad.svg" },
-  { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C", logo: "/banks/saudifransi.svg" },
-  { key: "alawwal", name: "البنك الأول", short: "الأول", color: "#1B3A6B", logo: "/banks/alawwal.svg" },
-  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C", logo: "/banks/stcpay.svg" },
-  { key: "urpay", name: "URPay", short: "URPay", color: "#3A2D7D", logo: "/banks/urpay.svg" },
+  { key: "alinma", name: "مصرف الإنماء", short: "الإنماء", color: "#6E2C8B", logo: "/banks/alinma.png" },
+  { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B", logo: "/banks/albilad.png" },
+  { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C", logo: "/banks/saudifransi.png" },
+  { key: "alawwal", name: "البنك الأول", short: "الأول", color: "#1B3A6B", logo: "/banks/alawwal.png" },
+  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C", logo: "/banks/stcpay.png" },
+  { key: "urpay", name: "URPay", short: "URPay", color: "#3A2D7D", logo: "/banks/urpay.png" },
   { key: "barq", name: "برق (Barq)", short: "برق", color: "#6C2BD9", logo: "/banks/barq.png" },
-  { key: "d360", name: "بنك D360", short: "D360", color: "#00B8A9", logo: "/banks/d360.svg" },
-  { key: "mobilypay", name: "Mobily Pay", short: "Mobily Pay", color: "#7B2D8E", logo: "/banks/mobilypay.svg" },
-  { key: "alinmapay", name: "Alinma Pay", short: "Alinma Pay", color: "#8E44AD", logo: "/banks/alinmapay.svg" },
+  { key: "d360", name: "بنك D360", short: "D360", color: "#00B8A9", logo: "/banks/d360.png" },
+  { key: "mobilypay", name: "Mobily Pay", short: "Mobily Pay", color: "#7B2D8E", logo: "/banks/mobilypay.png" },
+  { key: "alinmapay", name: "Alinma Pay", short: "Alinma Pay", color: "#8E44AD", logo: "/banks/alinmapay.png" },
   { key: "other", name: "بنك آخر", short: "بنك", color: "#343A93" },
 ];
 
