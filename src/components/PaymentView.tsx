@@ -102,8 +102,8 @@ export function PaymentView({ content }: { content: PaymentContent }) {
                 <span className="font-extrabold text-brand-900">بطاقة بنكية</span>
                 <span className="flex items-center gap-1.5">
                   <PayLogo src="/pay/visa.svg" label="VISA" bg="#1A1F71" />
-                  <PayLogo src="/pay/mastercard.svg" label="Mastercard" bg="#23272F" />
-                  <PayLogo src="/pay/mada.svg" label="mada" bg="#159A8B" />
+                  <PayLogo src="/pay/mastercard.png" label="Mastercard" bg="#23272F" />
+                  <PayLogo src="/pay/mada.png" label="mada" bg="#159A8B" />
                 </span>
               </div>
             )}
