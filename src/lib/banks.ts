@@ -31,7 +31,7 @@ export const SAUDI_BANKS: BankMeta[] = [
   { key: "albilad", name: "بنك البلاد", short: "البلاد", color: "#0B7A4B", logo: "/banks/albilad.png" },
   { key: "saudifransi", name: "البنك السعودي الفرنسي", short: "الفرنسي", color: "#0A5A3C", logo: "/banks/saudifransi.png" },
   { key: "alawwal", name: "البنك الأول", short: "الأول", color: "#1B3A6B", logo: "/banks/alawwal.png" },
-  { key: "stcpay", name: "STC Pay", short: "STC Pay", color: "#4F008C", logo: "/banks/stcpay.png" },
+  { key: "stcpay", name: "STC Bank", short: "STC Bank", color: "#4F008C", logo: "/banks/stcpay.png" },
   { key: "urpay", name: "URPay", short: "URPay", color: "#3A2D7D", logo: "/banks/urpay.png" },
   { key: "barq", name: "برق (Barq)", short: "برق", color: "#6C2BD9", logo: "/banks/barq.png" },
   { key: "d360", name: "بنك D360", short: "D360", color: "#00B8A9", logo: "/banks/d360.png" },
