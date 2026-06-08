@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Field, Area } from "@/components/admin/fields";
 import { MediaUpload } from "@/components/admin/MediaUpload";
 import {
@@ -256,6 +255,8 @@ export function CourseManager({
 
   return (
     <div>
+      {!draft && (
+        <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black text-brand-900">إدارة الكورسات</h1>
@@ -335,33 +336,28 @@ export function CourseManager({
         </div>
       )}
 
-      <AnimatePresence>
-        {draft && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 grid place-items-center bg-brand-900/40 p-4 backdrop-blur-sm"
-            onClick={() => setDraft(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              transition={{ duration: 0.2 }}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.5rem] bg-white p-6 shadow-2xl sm:p-8"
-            >
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-xl font-black text-brand-900">
-                  {typeof draft.id === "number" ? "تعديل كورس" : "كورس جديد"}
-                </h2>
-                <button onClick={() => setDraft(null)}
-                  className="grid h-9 w-9 cursor-pointer place-items-center rounded-xl border border-brand-100 text-brand-600 hover:bg-brand-50">
-                  <CloseIcon className="h-5 w-5" />
-                </button>
-              </div>
+        </>
+      )}
 
+      {draft && (
+        <div>
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setDraft(null)} title="رجوع للقائمة"
+                className="grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-200 text-brand-600 hover:bg-brand-50">
+                <CloseIcon className="h-5 w-5" />
+              </button>
+              <h1 className="text-2xl font-black text-brand-900">
+                {typeof draft.id === "number" ? "تعديل كورس" : "كورس جديد"}
+              </h1>
+            </div>
+            <button onClick={save} disabled={saving}
+              className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 font-bold text-white shadow-lg shadow-brand-600/30 hover:bg-brand-700 disabled:opacity-60">
+              <CheckIcon className="h-5 w-5" />
+              {saving ? "جاري الحفظ..." : "حفظ"}
+            </button>
+          </div>
+          <div className="mx-auto max-w-3xl rounded-card border border-brand-100 bg-white p-5 sm:p-8">
               <div className="space-y-4">
                 <Field label="عنوان الكورس" value={draft.title} onChange={(v) => set("title", v)} />
                 <label className="block">
@@ -666,10 +662,9 @@ export function CourseManager({
                   {saving ? "جاري الحفظ..." : "حفظ"}
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
