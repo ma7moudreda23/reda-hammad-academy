@@ -32,6 +32,22 @@ function PayBadge({ label, bg }: { label: string; bg: string }) {
   );
 }
 
+// Shows the uploaded logo SVG/PNG; falls back to a styled text badge if the
+// file isn't present (so you can add /public/pay/*.svg anytime).
+function PayLogo({ src, label, bg }: { src: string; label: string; bg: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <PayBadge label={label} bg={bg} />;
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={src}
+      alt={label}
+      onError={() => setFailed(true)}
+      className="h-7 w-auto max-w-[72px] rounded-md object-contain"
+    />
+  );
+}
+
 function CardIcon() {
   return (
     <svg viewBox="0 0 48 32" className="h-7 w-10" aria-hidden>
@@ -85,15 +101,15 @@ export function PaymentView({ content }: { content: PaymentContent }) {
                 <CardIcon />
                 <span className="font-extrabold text-brand-900">بطاقة بنكية</span>
                 <span className="flex items-center gap-1.5">
-                  <PayBadge label="VISA" bg="#1A1F71" />
-                  <PayBadge label="Mastercard" bg="#23272F" />
-                  <PayBadge label="mada" bg="#159A8B" />
+                  <PayLogo src="/pay/visa.svg" label="VISA" bg="#1A1F71" />
+                  <PayLogo src="/pay/mastercard.svg" label="Mastercard" bg="#23272F" />
+                  <PayLogo src="/pay/mada.svg" label="mada" bg="#159A8B" />
                 </span>
               </div>
             )}
             {content.applePayEnabled && (
               <div className="flex items-center gap-2.5 rounded-2xl border border-brand-100 bg-white px-5 py-3.5 shadow-sm">
-                <PayBadge label="Apple Pay" bg="#000000" />
+                <PayLogo src="/pay/apple-pay.svg" label="Apple Pay" bg="#000000" />
                 <span className="font-extrabold text-brand-900">متاح</span>
               </div>
             )}
