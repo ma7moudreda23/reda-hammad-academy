@@ -109,6 +109,17 @@ export function CourseManager({
     ]),
   );
 
+  // Group the courses by category so the list is easy to review.
+  const groupedCourses = (() => {
+    const map = new Map<string, AdminCourse[]>();
+    for (const c of courses) {
+      const key = c.category?.trim() || "بدون فئة";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(c);
+    }
+    return Array.from(map.entries()).map(([category, list]) => ({ category, list }));
+  })();
+
   function openNew() {
     setError("");
     setDraft(emptyDraft(defaultPlatformUrl, courses.length + 1));
@@ -267,48 +278,60 @@ export function CourseManager({
           <p className="mt-1 text-sm text-brand-900/55">ابدأ بإضافة أول كورس.</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.map((c) => {
-            const sectionCount = parseCurriculum(c.curriculum).length;
-            return (
-              <div key={c.id} className="overflow-hidden rounded-card border border-brand-100 bg-white">
-                <div className="relative aspect-video bg-brand-50">
-                  {c.imageUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={c.imageUrl} alt={c.title} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="grid h-full w-full place-items-center text-brand-300">
-                      <AcademicIcon className="h-10 w-10" />
-                    </div>
-                  )}
-                  {!c.isPublished && (
-                    <span className="absolute right-2 top-2 rounded-full bg-brand-900/70 px-2.5 py-1 text-xs font-bold text-white">
-                      مخفي
-                    </span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-extrabold text-brand-900">{c.title}</h3>
-                  <p className="mt-1 line-clamp-2 text-sm text-brand-900/55">{c.description}</p>
-                  <div className="mt-2 flex items-center gap-3 text-xs font-semibold text-brand-900/50">
-                    {c.price && <span className="text-brand-700">{c.price} {c.currency}</span>}
-                    {sectionCount > 0 && <span>{sectionCount} أقسام</span>}
-                    {c.isFeatured && <span className="text-accent-600">★ مميّز</span>}
-                  </div>
-                  <div className="mt-4 flex gap-2">
-                    <button onClick={() => openEdit(c)}
-                      className="flex-1 cursor-pointer rounded-lg border border-brand-200 px-3 py-2 text-sm font-bold text-brand-700 transition-colors hover:bg-brand-50">
-                      تعديل
-                    </button>
-                    <button onClick={() => remove(c)}
-                      className="cursor-pointer rounded-lg border border-red-200 px-3 py-2 text-sm font-bold text-red-600 transition-colors hover:bg-red-50">
-                      حذف
-                    </button>
-                  </div>
-                </div>
+        <div className="space-y-8">
+          {groupedCourses.map(({ category, list }) => (
+            <div key={category}>
+              <div className="mb-3 flex items-center gap-2 border-b border-brand-100 pb-2">
+                <h2 className="text-lg font-black text-brand-900">{category}</h2>
+                <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-bold text-brand-700">
+                  {list.length}
+                </span>
               </div>
-            );
-          })}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {list.map((c) => {
+                  const sectionCount = parseCurriculum(c.curriculum).length;
+                  return (
+                    <div key={c.id} className="overflow-hidden rounded-card border border-brand-100 bg-white">
+                      <div className="relative aspect-video bg-brand-50">
+                        {c.imageUrl ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={c.imageUrl} alt={c.title} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="grid h-full w-full place-items-center text-brand-300">
+                            <AcademicIcon className="h-10 w-10" />
+                          </div>
+                        )}
+                        {!c.isPublished && (
+                          <span className="absolute right-2 top-2 rounded-full bg-brand-900/70 px-2.5 py-1 text-xs font-bold text-white">
+                            مخفي
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-extrabold text-brand-900">{c.title}</h3>
+                        <p className="mt-1 line-clamp-2 text-sm text-brand-900/55">{c.description}</p>
+                        <div className="mt-2 flex items-center gap-3 text-xs font-semibold text-brand-900/50">
+                          {c.price && <span className="text-brand-700">{c.price} {c.currency}</span>}
+                          {sectionCount > 0 && <span>{sectionCount} أقسام</span>}
+                          {c.isFeatured && <span className="text-accent-600">★ مميّز</span>}
+                        </div>
+                        <div className="mt-4 flex gap-2">
+                          <button onClick={() => openEdit(c)}
+                            className="flex-1 cursor-pointer rounded-lg border border-brand-200 px-3 py-2 text-sm font-bold text-brand-700 transition-colors hover:bg-brand-50">
+                            تعديل
+                          </button>
+                          <button onClick={() => remove(c)}
+                            className="cursor-pointer rounded-lg border border-red-200 px-3 py-2 text-sm font-bold text-red-600 transition-colors hover:bg-red-50">
+                            حذف
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
