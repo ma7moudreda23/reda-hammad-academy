@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ensureDatabase, normalizeCourseSlugs } from "@/lib/init-db";
+import { ensureDatabase, normalizeCourseSlugs, ensureMawhibaCurriculum } from "@/lib/init-db";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +9,9 @@ export async function GET() {
   try {
     const result = await ensureDatabase();
     const slugs = await normalizeCourseSlugs();
+    const curriculum = await ensureMawhibaCurriculum();
     return NextResponse.json(
-      { ...result, slugsFixed: slugs.fixed },
+      { ...result, slugsFixed: slugs.fixed, curriculumUpdated: curriculum.updated },
       { status: result.ok ? 200 : 500 },
     );
   } catch (e) {

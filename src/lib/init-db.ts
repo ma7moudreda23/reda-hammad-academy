@@ -10,6 +10,23 @@ const PLATFORM =
 
 const CHARSET = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
+// Default curriculum sections for the Mawhiba courses (editable afterwards).
+const FOUNDATION_SECTION = {
+  title: "قسم التأسيس",
+  items: Array.from({ length: 20 }, (_, i) => ({
+    title: `الحصة ${i + 1}`,
+    type: "video" as const,
+  })),
+};
+const EXAMS_SECTION = {
+  title: "قسم الاختبارات",
+  items: Array.from({ length: 20 }, (_, i) => ({
+    title: `اختبار ${i + 1}`,
+    type: "exam" as const,
+  })),
+};
+const DEFAULT_CURRICULUM = JSON.stringify([FOUNDATION_SECTION, EXAMS_SECTION]);
+
 const STATEMENTS = [
   `CREATE TABLE IF NOT EXISTS \`Admin\` (
     \`id\` INT NOT NULL AUTO_INCREMENT,
@@ -139,6 +156,7 @@ export async function ensureDatabase(): Promise<{ ok: boolean; message: string }
             currency: "ريال سعودي",
             badge: "موهبة",
             category: "مقياس موهبة",
+            curriculum: DEFAULT_CURRICULUM,
             platformUrl: PLATFORM,
             isPublished: true,
             isFeatured: true,
@@ -179,4 +197,48 @@ export async function normalizeCourseSlugs(): Promise<{ fixed: number }> {
     console.error("normalizeCourseSlugs failed", e);
   }
   return { fixed };
+}
+
+// Add the default "قسم التأسيس" + "قسم الاختبارات" sections to the Mawhiba
+// courses if they don't already have them. Keeps any existing sections and is
+// idempotent (won't duplicate). Editable/deletable afterwards from the admin.
+export async function ensureMawhibaCurriculum(): Promise<{ updated: number }> {
+  let updated = 0;
+  const slugs = ["mawhiba-level-1", "mawhiba-level-2", "mawhiba-level-3"];
+  try {
+    for (const slug of slugs) {
+      const course = await prisma.course.findUnique({
+        where: { slug },
+        select: { id: true, curriculum: true },
+      });
+      if (!course) continue;
+      let sections: { title: string; items: unknown[] }[];
+      try {
+        const parsed = JSON.parse(course.curriculum || "[]");
+        sections = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        sections = [];
+      }
+      const has = (t: string) => sections.some((s) => s && s.title === t);
+      let changed = false;
+      if (!has(FOUNDATION_SECTION.title)) {
+        sections.push(FOUNDATION_SECTION);
+        changed = true;
+      }
+      if (!has(EXAMS_SECTION.title)) {
+        sections.push(EXAMS_SECTION);
+        changed = true;
+      }
+      if (changed) {
+        await prisma.course.update({
+          where: { id: course.id },
+          data: { curriculum: JSON.stringify(sections) },
+        });
+        updated++;
+      }
+    }
+  } catch (e) {
+    console.error("ensureMawhibaCurriculum failed", e);
+  }
+  return { updated };
 }
