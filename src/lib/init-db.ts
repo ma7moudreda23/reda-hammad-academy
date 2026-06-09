@@ -234,7 +234,9 @@ export async function normalizeCourseSlugs(): Promise<{ fixed: number }> {
 // Apply the default 3-section template to the Mawhiba courses, but ONLY when a
 // course is still empty or holds a previous auto-seeded template — never
 // overwrites a course you've actually customized. Idempotent.
-export async function ensureMawhibaCurriculum(): Promise<{ updated: number }> {
+export async function ensureMawhibaCurriculum(
+  force: string[] = [],
+): Promise<{ updated: number }> {
   let updated = 0;
   const slugs = ["mawhiba-level-1", "mawhiba-level-2", "mawhiba-level-3"];
   try {
@@ -244,9 +246,10 @@ export async function ensureMawhibaCurriculum(): Promise<{ updated: number }> {
         select: { id: true, curriculum: true },
       });
       if (!course) continue;
+      const forced = force.includes(slug) || force.includes("all");
       const cur = (course.curriculum || "").trim();
       if (cur === DEFAULT_CURRICULUM) continue; // already the template
-      let seedable = cur === "" || cur === "[]" || cur === OLD_DEFAULT_CURRICULUM;
+      let seedable = forced || cur === "" || cur === "[]" || cur === OLD_DEFAULT_CURRICULUM;
       if (!seedable) {
         try {
           const a = JSON.parse(cur);
