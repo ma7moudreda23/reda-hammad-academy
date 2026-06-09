@@ -10,22 +10,54 @@ const PLATFORM =
 
 const CHARSET = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-// Default curriculum sections for the Mawhiba courses (editable afterwards).
-const FOUNDATION_SECTION = {
-  title: "قسم التأسيس",
-  items: Array.from({ length: 20 }, (_, i) => ({
-    title: `الحصة ${i + 1}`,
-    type: "video" as const,
-  })),
-};
-const EXAMS_SECTION = {
-  title: "قسم الاختبارات",
-  items: Array.from({ length: 20 }, (_, i) => ({
-    title: `اختبار ${i + 1}`,
-    type: "exam" as const,
-  })),
-};
-const DEFAULT_CURRICULUM = JSON.stringify([FOUNDATION_SECTION, EXAMS_SECTION]);
+// Default curriculum for the Mawhiba courses (editable/deletable afterwards).
+const ORD_F = [
+  "الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة", "السابعة",
+  "الثامنة", "التاسعة", "العاشرة", "الحادية عشرة", "الثانية عشرة", "الثالثة عشرة",
+  "الرابعة عشرة", "الخامسة عشرة", "السادسة عشرة", "السابعة عشرة", "الثامنة عشرة",
+  "التاسعة عشرة", "العشرون",
+];
+const ORD_M = [
+  "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس", "السابع", "الثامن",
+  "التاسع", "العاشر", "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر",
+  "الخامس عشر", "السادس عشر", "السابع عشر", "الثامن عشر", "التاسع عشر", "العشرون",
+];
+
+const DEFAULT_SECTIONS = [
+  {
+    title: "مذكرات الدورة",
+    items: [
+      { title: "المذكرة الأولى ( الإستدلال اللفظي )", type: "file" as const },
+      { title: "المذكرة الثانية ( الإستدلال الكمي )", type: "file" as const },
+      { title: "المذكرة الثالثة ( الإستدلال العلمي )", type: "file" as const },
+      { title: "المذكرة الرابعة ( المرونة العقلية )", type: "file" as const },
+    ],
+  },
+  {
+    title: "قسم التأسيس",
+    items: ORD_F.flatMap((o) => [
+      { title: `فيديو شرح الحصة ${o}`, type: "video" as const },
+      { title: `ملف شرح الحصة ${o}`, type: "file" as const },
+    ]),
+  },
+  {
+    title: "قسم الاختبارات",
+    items: ORD_M.map((o) => ({ title: `الاختبار ${o}`, type: "exam" as const })),
+  },
+];
+const DEFAULT_CURRICULUM = JSON.stringify(DEFAULT_SECTIONS);
+
+// Previous auto-seeded template (numeric) — used to detect un-customized courses.
+const OLD_DEFAULT_CURRICULUM = JSON.stringify([
+  {
+    title: "قسم التأسيس",
+    items: Array.from({ length: 20 }, (_, i) => ({ title: `الحصة ${i + 1}`, type: "video" })),
+  },
+  {
+    title: "قسم الاختبارات",
+    items: Array.from({ length: 20 }, (_, i) => ({ title: `اختبار ${i + 1}`, type: "exam" })),
+  },
+]);
 
 const STATEMENTS = [
   `CREATE TABLE IF NOT EXISTS \`Admin\` (
@@ -199,9 +231,9 @@ export async function normalizeCourseSlugs(): Promise<{ fixed: number }> {
   return { fixed };
 }
 
-// Add the default "قسم التأسيس" + "قسم الاختبارات" sections to the Mawhiba
-// courses if they don't already have them. Keeps any existing sections and is
-// idempotent (won't duplicate). Editable/deletable afterwards from the admin.
+// Apply the default 3-section template to the Mawhiba courses, but ONLY when a
+// course is still empty or holds a previous auto-seeded template — never
+// overwrites a course you've actually customized. Idempotent.
 export async function ensureMawhibaCurriculum(): Promise<{ updated: number }> {
   let updated = 0;
   const slugs = ["mawhiba-level-1", "mawhiba-level-2", "mawhiba-level-3"];
@@ -212,27 +244,21 @@ export async function ensureMawhibaCurriculum(): Promise<{ updated: number }> {
         select: { id: true, curriculum: true },
       });
       if (!course) continue;
-      let sections: { title: string; items: unknown[] }[];
-      try {
-        const parsed = JSON.parse(course.curriculum || "[]");
-        sections = Array.isArray(parsed) ? parsed : [];
-      } catch {
-        sections = [];
+      const cur = (course.curriculum || "").trim();
+      if (cur === DEFAULT_CURRICULUM) continue; // already the template
+      let seedable = cur === "" || cur === "[]" || cur === OLD_DEFAULT_CURRICULUM;
+      if (!seedable) {
+        try {
+          const a = JSON.parse(cur);
+          if (Array.isArray(a) && a.length === 0) seedable = true;
+        } catch {
+          seedable = true; // unparseable → safe to (re)seed
+        }
       }
-      const has = (t: string) => sections.some((s) => s && s.title === t);
-      let changed = false;
-      if (!has(FOUNDATION_SECTION.title)) {
-        sections.push(FOUNDATION_SECTION);
-        changed = true;
-      }
-      if (!has(EXAMS_SECTION.title)) {
-        sections.push(EXAMS_SECTION);
-        changed = true;
-      }
-      if (changed) {
+      if (seedable) {
         await prisma.course.update({
           where: { id: course.id },
-          data: { curriculum: JSON.stringify(sections) },
+          data: { curriculum: DEFAULT_CURRICULUM },
         });
         updated++;
       }
