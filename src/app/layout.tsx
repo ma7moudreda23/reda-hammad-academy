@@ -31,7 +31,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${cairo.variable} h-full`}
+      className={`${cairo.variable} h-full scroll-smooth`}
       suppressHydrationWarning
     >
       <body

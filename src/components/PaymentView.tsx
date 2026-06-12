@@ -12,10 +12,9 @@ function BankChip({ bank }: { bank: BankAccount }) {
   return (
     <div className="flex items-center gap-3">
       {logo ? (
-        /* eslint-disable-next-line @next/next/no-img-element */
         <span className="flex h-12 w-20 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-white p-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt={label} className="block h-full w-full object-contain" />
+          <img src={logo} alt={label} loading="lazy" decoding="async" className="block h-full w-full object-contain" />
         </span>
       ) : (
         <span
@@ -52,6 +51,8 @@ function PayLogo({ src, label, bg }: { src: string; label: string; bg: string })
       src={src}
       alt={label}
       onError={() => setFailed(true)}
+      loading="lazy"
+      decoding="async"
       className="h-7 w-auto max-w-[72px] rounded-md object-contain"
     />
   );

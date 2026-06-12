@@ -63,6 +63,8 @@ export default async function CourseDetailPage({
                 <img
                   src={course.imageUrl}
                   alt={course.title}
+                  fetchPriority="high"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
               ) : (

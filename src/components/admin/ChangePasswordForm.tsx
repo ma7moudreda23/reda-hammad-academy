@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Field, Card } from "@/components/admin/fields";
+import { Card } from "@/components/admin/fields";
 import { CheckIcon } from "@/components/icons";
 
 export function ChangePasswordForm({ email }: { email: string }) {

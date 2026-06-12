@@ -127,6 +127,8 @@ export function HomeSections({
                 <img
                   src={content.hero.imageUrl}
                   alt={content.brandName}
+                  fetchPriority="high"
+                  decoding="async"
                   className="h-full w-full object-cover object-top"
                 />
               ) : (
@@ -233,6 +235,8 @@ export function HomeSections({
                 <img
                   src={content.about.imageUrl}
                   alt={content.about.title}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
               ) : (

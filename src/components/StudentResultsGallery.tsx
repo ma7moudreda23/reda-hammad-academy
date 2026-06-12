@@ -47,6 +47,7 @@ export function StudentResultsGallery({ items }: { items: ResultItem[] }) {
               src={item.mediaUrl}
               alt={item.caption || "نتيجة طالب"}
               loading="lazy"
+              decoding="async"
               className="w-full"
             />
           )}

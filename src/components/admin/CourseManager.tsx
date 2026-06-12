@@ -296,7 +296,7 @@ export function CourseManager({
                       <div className="relative aspect-video bg-brand-50">
                         {c.imageUrl ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
-                          <img src={c.imageUrl} alt={c.title} className="h-full w-full object-cover" />
+                          <img src={c.imageUrl} alt={c.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                         ) : (
                           <div className="grid h-full w-full place-items-center text-brand-300">
                             <AcademicIcon className="h-10 w-10" />

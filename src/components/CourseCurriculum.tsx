@@ -192,11 +192,13 @@ export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
                       <video src={embed.src} controls autoPlay className="h-full w-full" />
                     );
                   if (embed.kind === "image")
-                    /* eslint-disable-next-line @next/next/no-img-element */
                     return (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={embed.src}
                         alt={preview.title || "معاينة"}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-contain"
                       />
                     );
