@@ -1,15 +1,38 @@
 import { NextResponse } from "next/server";
-import { ensureDatabase, normalizeCourseSlugs, ensureMawhibaCurriculum } from "@/lib/init-db";
+import { timingSafeEqual } from "node:crypto";
+import {
+  ensureDatabase,
+  normalizeCourseSlugs,
+  ensureMawhibaCurriculum,
+} from "@/lib/init-db";
+import { getSession } from "@/lib/auth";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Visit once after deploy to create the DB tables + seed admin/courses, and
-// fix any non-ASCII (Arabic) course slugs. Safe to call repeatedly (idempotent).
+function safeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
+}
+
+// Side-effecting maintenance endpoint: creates tables, seeds, fixes slugs, and
+// (with ?force=) re-applies the curriculum template. Protected — an admin
+// session, or a ?token= matching SETUP_TOKEN (for the first run before any
+// admin exists).
 export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const setupToken = process.env.SETUP_TOKEN ?? "";
+  const tokenOk =
+    setupToken.length > 0 && safeEqual(url.searchParams.get("token") ?? "", setupToken);
+  const authorized = tokenOk || (await getSession()) !== null;
+  if (!authorized) {
+    return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
+  }
+
   try {
-    // Optional: /api/setup?force=mawhiba-level-1  (or "all") to re-apply the
-    // default curriculum template, overwriting that course's current sections.
-    const force = (new URL(req.url).searchParams.get("force") || "")
+    const force = (url.searchParams.get("force") ?? "")
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
@@ -21,8 +44,9 @@ export async function GET(req: Request) {
       { status: result.ok ? 200 : 500 },
     );
   } catch (e) {
+    console.error("setup error", e);
     return NextResponse.json(
-      { ok: false, message: "unexpected error: " + String(e) },
+      { ok: false, message: "unexpected error" },
       { status: 500 },
     );
   }

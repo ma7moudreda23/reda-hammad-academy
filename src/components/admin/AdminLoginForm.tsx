@@ -9,7 +9,14 @@ import { BrandLogo } from "@/components/Logo";
 export function AdminLoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const from = params.get("from") || "/admin";
+  // Only allow internal paths — block //evil.com, /\evil.com and absolute URLs.
+  const rawFrom = params.get("from") || "/admin";
+  const from =
+    rawFrom.startsWith("/") &&
+    !rawFrom.startsWith("//") &&
+    !rawFrom.startsWith("/\\")
+      ? rawFrom
+      : "/admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

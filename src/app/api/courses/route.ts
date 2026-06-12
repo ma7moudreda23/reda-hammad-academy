@@ -5,6 +5,10 @@ import { slugify } from "@/lib/slug";
 import { PLATFORM_URL } from "@/lib/site";
 
 export async function GET() {
+  // Admin-only: this returns unpublished/draft courses too.
+  if (!(await getSession())) {
+    return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
+  }
   const courses = await prisma.course.findMany({
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
   });

@@ -5,6 +5,11 @@ import { getPaymentContent, savePaymentContent, DEFAULT_PAYMENT } from "@/lib/pa
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  // Admin-only: the public site reads bank accounts per-course (server-side),
+  // so the full account list is never exposed through this endpoint.
+  if (!(await getSession())) {
+    return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
+  }
   const content = await getPaymentContent();
   return NextResponse.json({ content });
 }

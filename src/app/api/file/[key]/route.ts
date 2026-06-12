@@ -21,6 +21,11 @@ export async function GET(
       headers: {
         "Content-Type": row.mime || "application/octet-stream",
         "Cache-Control": "public, max-age=31536000, immutable",
+        // Stop a stored SVG/HTML upload from running scripts if opened directly,
+        // and stop MIME sniffing.
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+        "Content-Disposition": "inline",
       },
     });
   } catch (e) {
