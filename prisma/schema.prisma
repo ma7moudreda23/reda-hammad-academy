@@ -28,6 +28,7 @@ model SiteSetting {
 // (the host's filesystem is ephemeral). Served via /api/file/<id>.<ext>.
 model Upload {
   id        Int      @id @default(autoincrement())
+  token     String?  @unique
   mime      String   @default("application/octet-stream")
   data      Bytes
   createdAt DateTime @default(now())

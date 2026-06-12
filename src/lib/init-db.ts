@@ -76,10 +76,12 @@ const STATEMENTS = [
   ) ${CHARSET}`,
   `CREATE TABLE IF NOT EXISTS \`Upload\` (
     \`id\` INT NOT NULL AUTO_INCREMENT,
+    \`token\` VARCHAR(64) NULL,
     \`mime\` VARCHAR(191) NOT NULL DEFAULT 'application/octet-stream',
     \`data\` LONGBLOB NOT NULL,
     \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    PRIMARY KEY (\`id\`)
+    PRIMARY KEY (\`id\`),
+    UNIQUE INDEX \`Upload_token_key\`(\`token\`)
   ) ${CHARSET}`,
   `CREATE TABLE IF NOT EXISTS \`Course\` (
     \`id\` INT NOT NULL AUTO_INCREMENT,
@@ -110,6 +112,8 @@ const STATEMENTS = [
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentNote` TEXT NULL",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `showBankTransfer` TINYINT(1) NOT NULL DEFAULT 0",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentBanks` TEXT NULL",
+  "ALTER TABLE `Upload` ADD COLUMN IF NOT EXISTS `token` VARCHAR(64) NULL",
+  "ALTER TABLE `Upload` ADD UNIQUE INDEX IF NOT EXISTS `Upload_token_key`(`token`)",
 ];
 
 export async function ensureDatabase(): Promise<{ ok: boolean; message: string }> {

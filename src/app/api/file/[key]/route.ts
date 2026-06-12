@@ -9,13 +9,16 @@ export async function GET(
   ctx: { params: Promise<{ key: string }> },
 ) {
   const { key } = await ctx.params;
-  const id = parseInt(key, 10);
-  if (!Number.isFinite(id) || id <= 0) {
-    return new Response("Not found", { status: 404 });
-  }
+  // key looks like "<token>.<ext>" (or legacy "<id>.<ext>"). Strip the extension.
+  const base = key.replace(/\.[a-z0-9]+$/i, "");
+  if (!base) return new Response("Not found", { status: 404 });
 
   try {
-    const row = await prisma.upload.findUnique({ where: { id } });
+    let row = await prisma.upload.findUnique({ where: { token: base } });
+    // Backward-compat: old links used the numeric id.
+    if (!row && /^\d+$/.test(base)) {
+      row = await prisma.upload.findUnique({ where: { id: Number(base) } });
+    }
     if (!row) return new Response("Not found", { status: 404 });
     return new Response(Buffer.from(row.data as unknown as Uint8Array), {
       headers: {

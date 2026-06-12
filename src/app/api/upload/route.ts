@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -60,12 +61,14 @@ export async function POST(request: Request) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
   try {
-    const row = await prisma.upload.create({
-      data: { mime: file.type, data: buffer },
+    // Random, unguessable id so files can't be enumerated (e.g. /api/file/4,5,6).
+    const token = randomBytes(24).toString("base64url");
+    await prisma.upload.create({
+      data: { token, mime: file.type, data: buffer },
       select: { id: true },
     });
     // Extension in the URL lets the UI detect image/video/pdf for previews.
-    return NextResponse.json({ url: `/api/file/${row.id}.${extFromType(file.type)}` });
+    return NextResponse.json({ url: `/api/file/${token}.${extFromType(file.type)}` });
   } catch (e) {
     console.error("upload: DB store failed", e);
     return NextResponse.json({ error: "تعذّر حفظ الملف" }, { status: 500 });
