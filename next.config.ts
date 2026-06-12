@@ -19,9 +19,10 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [
-          // Block clickjacking (framing the admin/login).
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          // Block cross-site framing (clickjacking) but allow the site to embed
+          // its own uploaded files (PDF previews) on its own pages.
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
           // Stop MIME sniffing of responses.
           { key: "X-Content-Type-Options", value: "nosniff" },
           // Don't leak full URLs to third parties.
