@@ -19,6 +19,7 @@ const LINKS = [
   { href: "/admin/home", label: "محتوى الصفحة الرئيسية", icon: DeviceIcon },
   { href: "/admin/courses", label: "الكورسات", icon: AcademicIcon },
   { href: "/admin/payment", label: "الحسابات البنكية", icon: CardIcon },
+  { href: "/admin/account", label: "الحساب وكلمة المرور", icon: LoginIcon },
 ];
 
 export function AdminShell({
