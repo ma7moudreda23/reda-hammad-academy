@@ -18,7 +18,7 @@ const TYPE_META: Record<CourseItemType, { label: string; Icon: typeof PlayIcon }
 };
 
 /** Turn any pasted/uploaded URL into an embeddable form for the preview modal. */
-function getEmbed(url: string): { kind: "video" | "image" | "iframe"; src: string } {
+function getEmbed(url: string): { kind: "video" | "image" | "iframe" | "file"; src: string } {
   const u = url.trim();
   const yt = u.match(
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([\w-]{11})/,
@@ -28,7 +28,66 @@ function getEmbed(url: string): { kind: "video" | "image" | "iframe"; src: strin
   if (vm) return { kind: "iframe", src: `https://player.vimeo.com/video/${vm[1]}` };
   if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(u)) return { kind: "video", src: u };
   if (/\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(u)) return { kind: "image", src: u };
-  return { kind: "iframe", src: u }; // PDF and everything else
+  // Documents/archives browsers can't render inline → offer an open/download link.
+  if (/\.(docx?|xlsx?|pptx?|zip|rar|7z|txt|csv|rtf)(\?.*)?$/i.test(u))
+    return { kind: "file", src: u };
+  return { kind: "iframe", src: u }; // PDF, external links, and everything else
+}
+
+function FileFallback({ url }: { url: string }) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-white p-8 text-center">
+      <FileIcon className="h-14 w-14 text-brand-300" />
+      <p className="font-bold text-brand-900/80">هذا الملف لا يُعرض داخل الصفحة</p>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-xl bg-brand-600 px-6 py-3 font-bold text-white transition-colors hover:bg-brand-700"
+      >
+        فتح / تحميل الملف
+      </a>
+    </div>
+  );
+}
+
+function PreviewBody({ url, title }: { url: string; title: string }) {
+  const [error, setError] = useState(false);
+  const embed = getEmbed(url);
+
+  if (error || embed.kind === "file") return <FileFallback url={url} />;
+
+  if (embed.kind === "video")
+    return (
+      <video
+        src={embed.src}
+        controls
+        autoPlay
+        onError={() => setError(true)}
+        className="h-full w-full"
+      />
+    );
+  if (embed.kind === "image")
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={embed.src}
+        alt={title}
+        loading="lazy"
+        decoding="async"
+        onError={() => setError(true)}
+        className="h-full w-full object-contain"
+      />
+    );
+  return (
+    <iframe
+      src={embed.src}
+      title={title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      className="h-full w-full border-0 bg-white"
+    />
+  );
 }
 
 export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
@@ -185,33 +244,7 @@ export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
                 </button>
               </div>
               <div className="aspect-video w-full bg-black">
-                {(() => {
-                  const embed = getEmbed(preview.url);
-                  if (embed.kind === "video")
-                    return (
-                      <video src={embed.src} controls autoPlay className="h-full w-full" />
-                    );
-                  if (embed.kind === "image")
-                    return (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={embed.src}
-                        alt={preview.title || "معاينة"}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-contain"
-                      />
-                    );
-                  return (
-                    <iframe
-                      src={embed.src}
-                      title={preview.title || "معاينة"}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="h-full w-full border-0"
-                    />
-                  );
-                })()}
+                <PreviewBody key={preview.url} url={preview.url} title={preview.title || "معاينة"} />
               </div>
             </motion.div>
           </motion.div>
