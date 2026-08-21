@@ -195,6 +195,11 @@ export function CourseCurriculum({ sections }: { sections: CourseSection[] }) {
                                 {inner}
                               </div>
                             )}
+                            {item.note && (
+                              <p className="-mt-1 px-5 pb-3 pr-[4.25rem] text-sm leading-6 text-brand-900/55">
+                                {item.note}
+                              </p>
+                            )}
                           </li>
                         );
                       })}

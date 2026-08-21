@@ -108,9 +108,9 @@ function SectionGenerator({
         <option value="videos">حصص (فيديو)</option>
       </select>
       <span className="text-xs text-brand-900/50">من 1 إلى</span>
-      <input type="number" min={1} max={60} value={count}
+      <input type="number" min={1} max={200} value={count}
         onChange={(e) => setCount(Number(e.target.value) || 0)}
-        className="w-14 rounded-md border border-brand-200 px-2 py-1 text-xs text-brand-900 outline-none" />
+        className="w-16 rounded-md border border-brand-200 px-2 py-1 text-xs text-brand-900 outline-none" />
       <button type="button" onClick={() => onGenerate(kind, count)}
         className="cursor-pointer rounded-md bg-accent-500 px-2.5 py-1 text-xs font-bold text-brand-900 hover:bg-accent-600">
         توليد
@@ -204,7 +204,7 @@ export function CourseManager({
       draft.curriculum.map((s, x) => (x === si ? { ...s, items } : s)),
     );
   }
-  function updateItem(si: number, ii: number, patch: Partial<{ title: string; type: CourseItemType; url: string }>) {
+  function updateItem(si: number, ii: number, patch: Partial<{ title: string; type: CourseItemType; url: string; note: string }>) {
     if (!draft) return;
     const next = draft.curriculum.map((s, x) =>
       x === si
@@ -684,6 +684,12 @@ export function CourseManager({
                                     />
                                   </div>
                                 )}
+                                <input
+                                  value={item.note ?? ""}
+                                  onChange={(e) => updateItem(si, ii, { note: e.target.value })}
+                                  placeholder="تعليق تحت العنصر (اختياري)"
+                                  className="mt-2 w-full rounded-lg border border-brand-200 bg-white px-3 py-1.5 pr-6 text-xs text-brand-900/80 outline-none placeholder:text-brand-900/35 focus:border-brand-500"
+                                />
                               </div>
                             );
                           })}

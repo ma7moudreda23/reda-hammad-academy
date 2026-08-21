@@ -1,7 +1,7 @@
 // Client-safe curriculum types & parsing (no server-only imports).
 
 export type CourseItemType = "video" | "file" | "exam";
-export type CourseItem = { title: string; type: CourseItemType; url?: string };
+export type CourseItem = { title: string; type: CourseItemType; url?: string; note?: string };
 export type CourseSection = { title: string; items: CourseItem[] };
 
 export function parseStringList(json: string): string[] {
@@ -35,6 +35,9 @@ export function parseCurriculum(json: string): CourseSection[] {
                   : "video",
                 ...(typeof it.url === "string" && it.url.trim()
                   ? { url: it.url.trim() }
+                  : {}),
+                ...(typeof it.note === "string" && it.note.trim()
+                  ? { note: it.note.trim() }
                   : {}),
               }))
           : [],
