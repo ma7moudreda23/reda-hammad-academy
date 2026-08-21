@@ -59,7 +59,7 @@ export function CourseCard({ course, index = 0 }: { course: CourseView; index?: 
           {course.price ? (
             <span className="flex items-baseline gap-2">
               {course.oldPrice && (
-                <span className="text-sm font-bold text-brand-900/40 line-through">
+                <span className="text-base font-bold text-brand-900/55 line-through decoration-red-500 decoration-2">
                   {course.oldPrice}
                 </span>
               )}
