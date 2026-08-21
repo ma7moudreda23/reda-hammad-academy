@@ -384,10 +384,14 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
                   <MediaUpload label="صورة الإعلان (اختياري)" value={item.imageUrl}
                     onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, imageUrl: v }; update("announcements", { ...c.announcements, items }); }} />
                 </div>
+                <div className="mt-3">
+                  <Field label="رابط «عرض التفاصيل» (اختياري)" dir="ltr" placeholder="https://... أو /courses/..." value={item.link ?? ""}
+                    onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, link: v }; update("announcements", { ...c.announcements, items }); }} />
+                </div>
               </div>
             ))}
           </div>
-          <button type="button" onClick={() => update("announcements", { ...c.announcements, items: [...c.announcements.items, { title: "", body: "", imageUrl: "" }] })}
+          <button type="button" onClick={() => update("announcements", { ...c.announcements, items: [...c.announcements.items, { title: "", body: "", imageUrl: "", link: "" }] })}
             className="cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
             + إضافة إعلان
           </button>

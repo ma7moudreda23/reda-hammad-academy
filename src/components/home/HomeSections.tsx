@@ -199,7 +199,7 @@ export function HomeSections({
       )}
 
       {content.announcements.items.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pt-20">
+        <section id="announcements" className="mx-auto max-w-6xl px-5 pt-20 scroll-mt-28">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/50 bg-accent-500/10 px-4 py-1.5 text-sm font-bold text-accent-600">
               <StarIcon className="h-4 w-4" />
@@ -222,10 +222,21 @@ export function HomeSections({
                       <img src={a.imageUrl} alt={a.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                     </div>
                   )}
-                  <div className="flex-1 p-5">
+                  <div className="flex flex-1 flex-col p-5">
                     <h3 className="text-lg font-extrabold text-brand-900">{a.title}</h3>
                     {a.body && (
                       <p className="mt-2 whitespace-pre-line leading-7 text-brand-900/65">{a.body}</p>
+                    )}
+                    {a.link && (
+                      <a
+                        href={a.link}
+                        target={a.link.startsWith("http") ? "_blank" : undefined}
+                        rel={a.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="mt-4 inline-flex w-fit items-center gap-1.5 self-start rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-700"
+                      >
+                        عرض التفاصيل
+                        <ArrowIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                      </a>
                     )}
                   </div>
                 </div>

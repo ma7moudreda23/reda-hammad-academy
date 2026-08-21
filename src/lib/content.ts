@@ -45,7 +45,7 @@ export type HomeContent = {
   announcements: {
     title: string;
     subtitle: string;
-    items: { title: string; body: string; imageUrl: string }[];
+    items: { title: string; body: string; imageUrl: string; link: string }[];
   };
   testimonials: Testimonial[];
   cta: {

@@ -6,6 +6,7 @@ export const NAV_LINKS = [
   { href: "/", label: "الرئيسية" },
   { href: "/courses", label: "الكورسات" },
   { href: "/students", label: "إنجازات طلابنا" },
+  { href: "/#announcements", label: "إعلانات المنصة" },
 ];
 
 export const POLICY_LINKS = [
