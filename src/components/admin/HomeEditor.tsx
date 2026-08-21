@@ -359,6 +359,40 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
           </button>
         </Card>
 
+        {/* Announcements */}
+        <Card title="إعلانات المنصة" desc="أعلن عن دورة جديدة أو خبر — عنوان + تفاصيل + صورة. يظهر في الصفحة الرئيسية.">
+          <Field label="عنوان القسم" value={c.announcements.title} onChange={(v) => update("announcements", { ...c.announcements, title: v })} />
+          <Area label="وصف مختصر" rows={2} value={c.announcements.subtitle} onChange={(v) => update("announcements", { ...c.announcements, subtitle: v })} />
+
+          <div className="space-y-4">
+            {c.announcements.items.map((item, i) => (
+              <div key={i} className="rounded-xl border border-brand-100 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="font-bold text-brand-900">إعلان {i + 1}</span>
+                  <button type="button" onClick={() => update("announcements", { ...c.announcements, items: c.announcements.items.filter((_, x) => x !== i) })}
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-100 text-red-500 hover:bg-red-50">
+                    <CloseIcon className="h-4 w-4" />
+                  </button>
+                </div>
+                <Field label="العنوان" value={item.title}
+                  onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, title: v }; update("announcements", { ...c.announcements, items }); }} />
+                <div className="mt-3">
+                  <Area label="التفاصيل" rows={3} value={item.body}
+                    onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, body: v }; update("announcements", { ...c.announcements, items }); }} />
+                </div>
+                <div className="mt-3">
+                  <MediaUpload label="صورة الإعلان (اختياري)" value={item.imageUrl}
+                    onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, imageUrl: v }; update("announcements", { ...c.announcements, items }); }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={() => update("announcements", { ...c.announcements, items: [...c.announcements.items, { title: "", body: "", imageUrl: "" }] })}
+            className="cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
+            + إضافة إعلان
+          </button>
+        </Card>
+
         {/* CTA */}
         <Card title="قسم الدعوة للاشتراك (CTA)">
           <Field label="العنوان" value={c.cta.title} onChange={(v) => update("cta", { ...c.cta, title: v })} />

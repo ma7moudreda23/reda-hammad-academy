@@ -47,7 +47,7 @@ export function BrandLogo({
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/logo.png"
+      src="/logo.png?v=3"
       alt="أكاديمية رضا حماد التعليمية"
       className={className}
       onError={() => setError(true)}

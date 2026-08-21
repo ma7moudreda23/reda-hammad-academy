@@ -48,7 +48,9 @@ export async function PUT(
   if (body.currency !== undefined) data.currency = body.currency;
   if (body.badge !== undefined) data.badge = body.badge;
   if (body.category !== undefined) data.category = body.category;
+  if (body.detailsImageUrl !== undefined) data.detailsImageUrl = body.detailsImageUrl;
   if (body.paymentNote !== undefined) data.paymentNote = body.paymentNote;
+  if (body.showElectronicPayment !== undefined) data.showElectronicPayment = body.showElectronicPayment;
   if (body.showBankTransfer !== undefined) data.showBankTransfer = body.showBankTransfer;
   if (body.paymentBanks !== undefined) data.paymentBanks = body.paymentBanks;
   if (body.platformUrl !== undefined) data.platformUrl = body.platformUrl;

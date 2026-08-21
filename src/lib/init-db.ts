@@ -97,7 +97,9 @@ const STATEMENTS = [
     \`platformUrl\` TEXT NOT NULL,
     \`badge\` VARCHAR(191) NOT NULL DEFAULT '',
     \`category\` VARCHAR(191) NOT NULL DEFAULT '',
+    \`detailsImageUrl\` TEXT NULL,
     \`paymentNote\` TEXT NULL,
+    \`showElectronicPayment\` TINYINT(1) NOT NULL DEFAULT 1,
     \`showBankTransfer\` TINYINT(1) NOT NULL DEFAULT 0,
     \`paymentBanks\` TEXT NULL,
     \`isPublished\` TINYINT(1) NOT NULL DEFAULT 1,
@@ -112,6 +114,8 @@ const STATEMENTS = [
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentNote` TEXT NULL",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `showBankTransfer` TINYINT(1) NOT NULL DEFAULT 0",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `paymentBanks` TEXT NULL",
+  "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `detailsImageUrl` TEXT NULL",
+  "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `showElectronicPayment` TINYINT(1) NOT NULL DEFAULT 1",
   "ALTER TABLE `Upload` ADD COLUMN IF NOT EXISTS `token` VARCHAR(64) NULL",
   "ALTER TABLE `Upload` ADD UNIQUE INDEX IF NOT EXISTS `Upload_token_key`(`token`)",
 ];

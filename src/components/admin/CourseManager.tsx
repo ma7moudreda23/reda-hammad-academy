@@ -18,6 +18,7 @@ import {
   type CourseItemType,
 } from "@/lib/curriculum";
 import { COURSE_CATEGORIES } from "@/lib/site";
+import { generateItems, type GenerateKind } from "@/lib/ordinals";
 import {
   bankKey,
   getBankMeta,
@@ -38,7 +39,9 @@ export type AdminCourse = {
   currency: string;
   badge: string;
   category: string;
+  detailsImageUrl: string;
   paymentNote: string;
+  showElectronicPayment: boolean;
   showBankTransfer: boolean;
   paymentBanks: string;
   platformUrl: string;
@@ -76,7 +79,9 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     currency: "ريال سعودي",
     badge: "",
     category: "",
+    detailsImageUrl: "",
     paymentNote: "",
+    showElectronicPayment: true,
     showBankTransfer: false,
     paymentBanks: "all",
     platformUrl,
@@ -84,6 +89,34 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     isFeatured: false,
     sortOrder,
   };
+}
+
+function SectionGenerator({
+  onGenerate,
+}: {
+  onGenerate: (kind: GenerateKind, count: number) => void;
+}) {
+  const [count, setCount] = useState(20);
+  const [kind, setKind] = useState<GenerateKind>("exams");
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-brand-100 bg-white px-2 py-1">
+      <span className="text-xs font-bold text-brand-900/50">توليد سريع:</span>
+      <select value={kind} onChange={(e) => setKind(e.target.value as GenerateKind)}
+        className="rounded-md border border-brand-200 px-1.5 py-1 text-xs text-brand-900 outline-none">
+        <option value="exams">اختبارات</option>
+        <option value="lessons">حصص (فيديو + ملف)</option>
+        <option value="videos">حصص (فيديو)</option>
+      </select>
+      <span className="text-xs text-brand-900/50">من 1 إلى</span>
+      <input type="number" min={1} max={60} value={count}
+        onChange={(e) => setCount(Number(e.target.value) || 0)}
+        className="w-14 rounded-md border border-brand-200 px-2 py-1 text-xs text-brand-900 outline-none" />
+      <button type="button" onClick={() => onGenerate(kind, count)}
+        className="cursor-pointer rounded-md bg-accent-500 px-2.5 py-1 text-xs font-bold text-brand-900 hover:bg-accent-600">
+        توليد
+      </button>
+    </div>
+  );
 }
 
 export function CourseManager({
@@ -156,6 +189,20 @@ export function CourseManager({
       x === si ? { ...s, items: [...s.items, { title: "", type: "video" as CourseItemType }] } : s,
     );
     set("curriculum", next);
+  }
+  function generateSection(si: number, kind: GenerateKind, count: number) {
+    if (!draft) return;
+    const section = draft.curriculum[si];
+    if (
+      section.items.length > 0 &&
+      !confirm("سيتم استبدال العناصر الحالية في هذا القسم بالعناصر المولّدة. متابعة؟")
+    )
+      return;
+    const items = generateItems(kind, count);
+    set(
+      "curriculum",
+      draft.curriculum.map((s, x) => (x === si ? { ...s, items } : s)),
+    );
   }
   function updateItem(si: number, ii: number, patch: Partial<{ title: string; type: CourseItemType; url: string }>) {
     if (!draft) return;
@@ -374,7 +421,8 @@ export function CourseManager({
                 </label>
                 <Area label="نبذة مختصرة" rows={2} value={draft.description} onChange={(v) => set("description", v)} />
                 <Area label="تفاصيل كاملة" rows={4} value={draft.longDescription} onChange={(v) => set("longDescription", v)} />
-                <MediaUpload label="صورة الكورس" value={draft.imageUrl} onChange={(v) => set("imageUrl", v)} />
+                <MediaUpload label="صورة إضافية داخل «تفاصيل الكورس» (اختياري)" value={draft.detailsImageUrl} onChange={(v) => set("detailsImageUrl", v)} />
+                <MediaUpload label="صورة الكورس (الغلاف)" value={draft.imageUrl} onChange={(v) => set("imageUrl", v)} />
                 <div className="grid gap-4 sm:grid-cols-3">
                   <Field label="السعر" value={draft.price} onChange={(v) => set("price", v)} placeholder="مثال: 500" />
                   <label className="block">
@@ -426,6 +474,14 @@ export function CourseManager({
                     placeholder="مثال: تقدر تدفع بالبطاقة على المنصة، أو تحويل بنكي وترسل الإيصال على واتساب."
                   />
                   <label className="mt-3 flex items-center gap-3 rounded-xl border border-brand-200 bg-white px-4 py-3">
+                    <input type="checkbox" checked={draft.showElectronicPayment}
+                      onChange={(e) => set("showElectronicPayment", e.target.checked)}
+                      className="h-5 w-5 cursor-pointer accent-brand-600" />
+                    <span className="text-sm font-bold text-brand-900">
+                      إظهار الدفع الإلكتروني (بطاقة بنكية + Apple Pay)
+                    </span>
+                  </label>
+                  <label className="mt-2 flex items-center gap-3 rounded-xl border border-brand-200 bg-white px-4 py-3">
                     <input type="checkbox" checked={draft.showBankTransfer}
                       onChange={(e) => set("showBankTransfer", e.target.checked)}
                       className="h-5 w-5 cursor-pointer accent-brand-600" />
@@ -631,10 +687,13 @@ export function CourseManager({
                               </div>
                             );
                           })}
-                          <button type="button" onClick={() => addItem(si)}
-                            className="cursor-pointer rounded-lg bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700 hover:bg-brand-100">
-                            + عنصر
-                          </button>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <button type="button" onClick={() => addItem(si)}
+                              className="cursor-pointer rounded-lg bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700 hover:bg-brand-100">
+                              + عنصر
+                            </button>
+                            <SectionGenerator onGenerate={(kind, count) => generateSection(si, kind, count)} />
+                          </div>
                         </div>
                       </div>
                     ))}

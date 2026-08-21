@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { CourseCard, type CourseView } from "@/components/CourseCard";
-import { COURSE_CATEGORIES } from "@/lib/site";
 import { AcademicIcon } from "@/components/icons";
 
 const ALL = "الكل";
@@ -10,15 +9,12 @@ const ALL = "الكل";
 export function CoursesBrowser({ courses }: { courses: CourseView[] }) {
   const [active, setActive] = useState<string>(ALL);
 
-  // Categories actually present on the courses, ordered with the default
-  // ones first, then any custom categories the admin added.
-  const present = Array.from(
+  // Category tabs follow the order the categories first appear in the course
+  // list — which is sorted by the admin's `sortOrder`. So reordering courses
+  // (via the Order field) reorders the category tabs.
+  const ordered = Array.from(
     new Set(courses.map((c) => c.category).filter((c) => c && c.trim())),
   );
-  const ordered = [
-    ...COURSE_CATEGORIES.filter((c) => present.includes(c)),
-    ...present.filter((c) => !COURSE_CATEGORIES.includes(c)),
-  ];
   const tabs = [ALL, ...ordered];
   const filtered =
     active === ALL ? courses : courses.filter((c) => c.category === active);

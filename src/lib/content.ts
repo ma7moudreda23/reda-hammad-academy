@@ -42,6 +42,11 @@ export type HomeContent = {
     subtitle: string;
     items: { mediaUrl: string; caption: string }[];
   };
+  announcements: {
+    title: string;
+    subtitle: string;
+    items: { title: string; body: string; imageUrl: string }[];
+  };
   testimonials: Testimonial[];
   cta: {
     title: string;
@@ -151,6 +156,11 @@ export const DEFAULT_HOME: HomeContent = {
   studentResults: {
     title: "درجات طلابنا",
     subtitle: "فخورون بنتائج طلابنا وتفوّقهم — شوف بعض إنجازاتهم.",
+    items: [],
+  },
+  announcements: {
+    title: "إعلانات المنصة",
+    subtitle: "آخر الأخبار والدورات الجديدة في الأكاديمية.",
     items: [],
   },
   testimonials: [

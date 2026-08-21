@@ -43,6 +43,8 @@ export default async function CourseDetailPage({
   const courseBanks = course.showBankTransfer
     ? filterBanks(payment.banks, course.paymentBanks)
     : [];
+  const showPayment =
+    course.showElectronicPayment || courseBanks.length > 0 || !!course.paymentNote;
 
   return (
     <div className="pt-28 sm:pt-32">
@@ -120,27 +122,41 @@ export default async function CourseDetailPage({
           </Reveal>
         </div>
 
-        <Reveal className="mt-14">
-          <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
-          <PaymentView
-            content={{
-              intro: course.paymentNote ?? "",
-              cardEnabled: true,
-              applePayEnabled: true,
-              banks: courseBanks,
-            }}
-          />
-        </Reveal>
+        {showPayment && (
+          <Reveal className="mt-14">
+            <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
+            <PaymentView
+              content={{
+                intro: course.paymentNote ?? "",
+                cardEnabled: course.showElectronicPayment,
+                applePayEnabled: course.showElectronicPayment,
+                banks: courseBanks,
+              }}
+            />
+          </Reveal>
+        )}
 
-        {course.longDescription && (
+        {(course.longDescription || course.detailsImageUrl) && (
           <Reveal className="mt-14">
             <h2 className="flex items-center gap-2 text-2xl font-extrabold text-brand-900">
               <CheckIcon className="h-6 w-6 text-brand-600" />
               تفاصيل الكورس
             </h2>
-            <p className="mt-4 whitespace-pre-line text-lg leading-8 text-brand-900/70">
-              {course.longDescription}
-            </p>
+            {course.longDescription && (
+              <p className="mt-4 whitespace-pre-line text-lg leading-8 text-brand-900/70">
+                {course.longDescription}
+              </p>
+            )}
+            {course.detailsImageUrl && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={course.detailsImageUrl}
+                alt={course.title}
+                loading="lazy"
+                decoding="async"
+                className="mt-6 w-full rounded-card border border-brand-100"
+              />
+            )}
           </Reveal>
         )}
 

@@ -198,6 +198,43 @@ export function HomeSections({
         </section>
       )}
 
+      {content.announcements.items.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 pt-20">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/50 bg-accent-500/10 px-4 py-1.5 text-sm font-bold text-accent-600">
+              <StarIcon className="h-4 w-4" />
+              إعلانات
+            </span>
+            <h2 className="mt-5 text-3xl font-black text-brand-900 sm:text-4xl">
+              {content.announcements.title}
+            </h2>
+            {content.announcements.subtitle && (
+              <p className="mt-4 text-lg text-brand-900/65">{content.announcements.subtitle}</p>
+            )}
+          </Reveal>
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {content.announcements.items.map((a, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <div className="flex h-full flex-col overflow-hidden rounded-card border border-brand-100 bg-white shadow-sm">
+                  {a.imageUrl && (
+                    <div className="aspect-video bg-brand-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={a.imageUrl} alt={a.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 p-5">
+                    <h3 className="text-lg font-extrabold text-brand-900">{a.title}</h3>
+                    {a.body && (
+                      <p className="mt-2 whitespace-pre-line leading-7 text-brand-900/65">{a.body}</p>
+                    )}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* FEATURES */}
       <section className="mx-auto max-w-6xl px-5 py-20">
         <Reveal className="mx-auto max-w-2xl text-center">
