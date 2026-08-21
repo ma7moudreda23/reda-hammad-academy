@@ -12,6 +12,7 @@ export type CourseView = {
   imageUrl: string;
   price: string;
   oldPrice: string;
+  priceNote: string;
   currency: string;
   badge: string;
   category: string;
@@ -55,22 +56,27 @@ export function CourseCard({ course, index = 0 }: { course: CourseView; index?: 
           {course.description}
         </p>
 
-        <div className="mt-5 flex items-center justify-between gap-3">
-          {course.price ? (
-            <span className="flex items-baseline gap-2">
-              {course.oldPrice && (
-                <span className="text-base font-bold text-brand-900/55 line-through decoration-red-500 decoration-2">
-                  {course.oldPrice}
+        <div className="mt-5 flex items-end justify-between gap-3">
+          <div className="flex flex-col gap-0.5">
+            {course.price ? (
+              <span className="flex items-baseline gap-2">
+                {course.oldPrice && (
+                  <span className="text-lg font-black text-brand-900/45 line-through decoration-red-500 decoration-2">
+                    {course.oldPrice}
+                  </span>
+                )}
+                <span className="text-lg font-extrabold text-brand-700">
+                  {course.price}
+                  {course.currency ? ` ${course.currency}` : ""}
                 </span>
-              )}
-              <span className="text-lg font-extrabold text-brand-700">
-                {course.price}
-                {course.currency ? ` ${course.currency}` : ""}
               </span>
-            </span>
-          ) : (
-            <span className="text-sm font-semibold text-brand-500">سجّل الآن</span>
-          )}
+            ) : (
+              <span className="text-sm font-semibold text-brand-500">سجّل الآن</span>
+            )}
+            {course.priceNote && (
+              <span className="text-xs font-bold text-accent-600">{course.priceNote}</span>
+            )}
+          </div>
           <a
             href={course.platformUrl}
             target="_blank"

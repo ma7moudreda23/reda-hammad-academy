@@ -47,6 +47,7 @@ export async function POST(request: Request) {
       imageUrl: body.imageUrl ?? "",
       price: body.price ?? "",
       oldPrice: body.oldPrice ?? "",
+      priceNote: body.priceNote ?? "",
       currency: body.currency ?? "ريال سعودي",
       badge: body.badge ?? "",
       category: body.category ?? "",

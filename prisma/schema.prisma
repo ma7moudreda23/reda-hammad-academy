@@ -45,6 +45,7 @@ model Course {
   imageUrl        String   @default("") @db.Text
   price           String   @default("")
   oldPrice        String   @default("")
+  priceNote       String?  @db.Text
   currency        String   @default("ريال سعودي")
   platformUrl     String   @default("") @db.Text
   badge           String   @default("")

@@ -22,6 +22,7 @@ export default async function AdminCoursesPage() {
     imageUrl: c.imageUrl,
     price: c.price,
     oldPrice: c.oldPrice,
+    priceNote: c.priceNote ?? "",
     currency: c.currency,
     badge: c.badge,
     category: c.category,

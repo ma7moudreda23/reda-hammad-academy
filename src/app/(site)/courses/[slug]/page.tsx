@@ -93,7 +93,7 @@ export default async function CourseDetailPage({
             {course.price && (
               <p className="mt-6 flex items-baseline gap-3">
                 {course.oldPrice && (
-                  <span className="text-2xl font-bold text-brand-900/55 line-through decoration-red-500 decoration-2">
+                  <span className="text-3xl font-black text-brand-900/45 line-through decoration-red-500 decoration-[3px]">
                     {course.oldPrice}
                   </span>
                 )}
@@ -102,6 +102,9 @@ export default async function CourseDetailPage({
                   {course.currency ? ` ${course.currency}` : ""}
                 </span>
               </p>
+            )}
+            {course.priceNote && (
+              <p className="mt-2 text-sm font-bold text-accent-600">{course.priceNote}</p>
             )}
 
             <a

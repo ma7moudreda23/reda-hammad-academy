@@ -37,6 +37,7 @@ export type AdminCourse = {
   imageUrl: string;
   price: string;
   oldPrice: string;
+  priceNote: string;
   currency: string;
   badge: string;
   category: string;
@@ -78,6 +79,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     imageUrl: "",
     price: "",
     oldPrice: "",
+    priceNote: "",
     currency: "ريال سعودي",
     badge: "",
     category: "",
@@ -442,6 +444,7 @@ export function CourseManager({
                   </label>
                   <Field label="شارة (اختياري)" value={draft.badge} onChange={(v) => set("badge", v)} placeholder="مثال: موهبة" />
                 </div>
+                <Field label="تعليق تحت السعر (اختياري)" value={draft.priceNote} onChange={(v) => set("priceNote", v)} placeholder="مثال: لأول 100 مشترك" />
                 <label className="block">
                   <span className="mb-1.5 block text-sm font-bold text-brand-900">الفئة (للفلترة في صفحة الكورسات)</span>
                   <input
