@@ -17,6 +17,7 @@ function toView(c: {
   description: string;
   imageUrl: string;
   price: string;
+  oldPrice: string;
   currency: string;
   badge: string;
   category: string;
@@ -29,6 +30,7 @@ function toView(c: {
     description: c.description,
     imageUrl: c.imageUrl,
     price: c.price,
+    oldPrice: c.oldPrice,
     currency: c.currency,
     badge: c.badge,
     category: c.category,

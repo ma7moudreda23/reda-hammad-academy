@@ -44,6 +44,7 @@ model Course {
   features        String   @default("[]") @db.Text
   imageUrl        String   @default("") @db.Text
   price           String   @default("")
+  oldPrice        String   @default("")
   currency        String   @default("ريال سعودي")
   platformUrl     String   @default("") @db.Text
   badge           String   @default("")

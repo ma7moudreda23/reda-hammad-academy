@@ -91,9 +91,16 @@ export default async function CourseDetailPage({
             </p>
 
             {course.price && (
-              <p className="mt-6 text-3xl font-black text-brand-700">
-                {course.price}
-                {course.currency ? ` ${course.currency}` : ""}
+              <p className="mt-6 flex items-baseline gap-3">
+                {course.oldPrice && (
+                  <span className="text-xl font-bold text-brand-900/40 line-through">
+                    {course.oldPrice}
+                  </span>
+                )}
+                <span className="text-3xl font-black text-brand-700">
+                  {course.price}
+                  {course.currency ? ` ${course.currency}` : ""}
+                </span>
               </p>
             )}
 

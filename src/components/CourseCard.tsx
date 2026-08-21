@@ -11,6 +11,7 @@ export type CourseView = {
   description: string;
   imageUrl: string;
   price: string;
+  oldPrice: string;
   currency: string;
   badge: string;
   category: string;
@@ -56,9 +57,16 @@ export function CourseCard({ course, index = 0 }: { course: CourseView; index?: 
 
         <div className="mt-5 flex items-center justify-between gap-3">
           {course.price ? (
-            <span className="text-lg font-extrabold text-brand-700">
-              {course.price}
-              {course.currency ? ` ${course.currency}` : ""}
+            <span className="flex items-baseline gap-2">
+              {course.oldPrice && (
+                <span className="text-sm font-bold text-brand-900/40 line-through">
+                  {course.oldPrice}
+                </span>
+              )}
+              <span className="text-lg font-extrabold text-brand-700">
+                {course.price}
+                {course.currency ? ` ${course.currency}` : ""}
+              </span>
             </span>
           ) : (
             <span className="text-sm font-semibold text-brand-500">سجّل الآن</span>

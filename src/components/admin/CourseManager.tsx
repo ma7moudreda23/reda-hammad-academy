@@ -36,6 +36,7 @@ export type AdminCourse = {
   features: string;
   imageUrl: string;
   price: string;
+  oldPrice: string;
   currency: string;
   badge: string;
   category: string;
@@ -76,6 +77,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     features: [],
     imageUrl: "",
     price: "",
+    oldPrice: "",
     currency: "ريال سعودي",
     badge: "",
     category: "",
@@ -424,7 +426,8 @@ export function CourseManager({
                 <MediaUpload label="صورة إضافية داخل «تفاصيل الكورس» (اختياري)" value={draft.detailsImageUrl} onChange={(v) => set("detailsImageUrl", v)} />
                 <MediaUpload label="صورة الكورس (الغلاف)" value={draft.imageUrl} onChange={(v) => set("imageUrl", v)} />
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <Field label="السعر" value={draft.price} onChange={(v) => set("price", v)} placeholder="مثال: 500" />
+                  <Field label="السعر (الحالي)" value={draft.price} onChange={(v) => set("price", v)} placeholder="مثال: 250" />
+                  <Field label="السعر القديم (يظهر مشطوب — اختياري)" value={draft.oldPrice} onChange={(v) => set("oldPrice", v)} placeholder="مثال: 400" />
                   <label className="block">
                     <span className="mb-1.5 block text-sm font-bold text-brand-900">العملة</span>
                     <select

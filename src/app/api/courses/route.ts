@@ -46,6 +46,7 @@ export async function POST(request: Request) {
           : JSON.stringify(body.features ?? []),
       imageUrl: body.imageUrl ?? "",
       price: body.price ?? "",
+      oldPrice: body.oldPrice ?? "",
       currency: body.currency ?? "ريال سعودي",
       badge: body.badge ?? "",
       category: body.category ?? "",
