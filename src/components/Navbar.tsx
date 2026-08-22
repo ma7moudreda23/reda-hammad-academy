@@ -7,7 +7,7 @@ import { NAV_LINKS, POLICY_LINKS, CONTACT_LINK, PLATFORM_URL, BRAND_NAME } from 
 import { MenuIcon, CloseIcon, LoginIcon, ChevronIcon } from "@/components/icons";
 import { BrandLogo } from "@/components/Logo";
 
-export function Navbar() {
+export function Navbar({ tickerActive = false }: { tickerActive?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -19,7 +19,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
+    <header className={`fixed inset-x-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4 ${tickerActive ? "top-11" : "top-0"}`}>
       <nav
         className={`mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-2xl border px-4 py-3 transition-all duration-300 sm:px-6 ${
           scrolled

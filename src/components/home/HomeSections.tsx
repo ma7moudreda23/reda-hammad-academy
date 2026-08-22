@@ -15,7 +15,6 @@ import {
 } from "@/components/icons";
 import { BrandLogo } from "@/components/Logo";
 import { PromoVideo } from "@/components/PromoVideo";
-import { NewsTicker } from "@/components/NewsTicker";
 import { WhatsappIcon } from "@/components/social-icons";
 
 function toEmbed(url: string) {
@@ -41,20 +40,10 @@ export function HomeSections({
   content: HomeContent;
   featured: CourseView[];
 }) {
-  const showTicker = content.ticker?.enabled && content.ticker.items.length > 0;
   return (
     <>
-      {showTicker && (
-        <div className="pt-24 sm:pt-28">
-          <NewsTicker items={content.ticker.items} />
-        </div>
-      )}
       {/* HERO */}
-      <section
-        className={`relative overflow-hidden bg-grid pb-20 ${
-          showTicker ? "pt-10 sm:pt-14" : "pt-32 sm:pt-40"
-        }`}
-      >
+      <section className="relative overflow-hidden bg-grid pt-32 pb-20 sm:pt-40">
         <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-brand-200/40 blur-3xl" />
         <div className="pointer-events-none absolute -left-24 top-40 h-80 w-80 rounded-full bg-accent-400/20 blur-3xl" />
 
