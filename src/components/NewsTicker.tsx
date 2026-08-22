@@ -4,10 +4,14 @@ export function NewsTicker({ items }: { items: string[] }) {
   const clean = items.map((s) => s.trim()).filter(Boolean);
   if (clean.length === 0) return null;
 
-  // Duplicate the run so the -50% translate loops seamlessly.
-  const run = [...clean, ...clean];
-  // Slower for longer content so it stays readable.
-  const duration = Math.max(24, clean.join("").length * 0.45);
+  // Repeat the headlines enough to comfortably exceed the widest screen, so the
+  // strip is always full (no empty gaps). Then duplicate that group so the
+  // -50% translate loops seamlessly.
+  const repeat = Math.max(2, Math.ceil(14 / clean.length));
+  const group = Array.from({ length: repeat }, () => clean).flat();
+  const run = [...group, ...group];
+  // Speed scales with the group so it feels consistent regardless of content.
+  const duration = Math.max(28, group.length * 3.5);
 
   return (
     <div className="flex h-11 w-full items-stretch overflow-hidden bg-brand-900 text-white shadow-md" dir="rtl">

@@ -92,7 +92,8 @@ html {
 }
 .ticker-track {
   display: inline-flex;
-  min-width: 200%;
+  width: max-content;
+  align-items: center;
   animation: ticker-scroll linear infinite;
   will-change: transform;
 }
