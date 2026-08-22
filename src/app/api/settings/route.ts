@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getHomeContent, saveHomeContent, DEFAULT_HOME } from "@/lib/content";
+import { csrfGuard } from "@/lib/request-guard";
 
 export async function GET() {
   const content = await getHomeContent();
@@ -8,6 +9,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
   if (!(await getSession())) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }

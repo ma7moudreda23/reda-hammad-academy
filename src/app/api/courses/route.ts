@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { PLATFORM_URL } from "@/lib/site";
+import { csrfGuard } from "@/lib/request-guard";
 
 export async function GET() {
   // Admin-only: this returns unpublished/draft courses too.
@@ -12,10 +13,12 @@ export async function GET() {
   const courses = await prisma.course.findMany({
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
   });
-  return NextResponse.json({ courses });
+  return NextResponse.json({ courses }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
   if (!(await getSession())) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }

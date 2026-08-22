@@ -1,13 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession, verifyPassword, hashPassword } from "@/lib/auth";
+import { csrfGuard, createRateLimiter, clientIp } from "@/lib/request-guard";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const allow = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
+
 export async function POST(request: Request) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
+
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
+  }
+  if (!allow(clientIp(request))) {
+    return NextResponse.json({ error: "محاولات كثيرة، حاول لاحقًا." }, { status: 429 });
   }
 
   const body = await request.json().catch(() => null);

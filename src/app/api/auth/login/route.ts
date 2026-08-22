@@ -5,29 +5,21 @@ import {
   createSessionToken,
   verifyPassword,
 } from "@/lib/auth";
+import { csrfGuard, createRateLimiter, clientIp } from "@/lib/request-guard";
 
-// Best-effort in-memory brute-force throttle (per IP). Resets on restart.
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_ATTEMPTS = 8;
-const attempts = new Map<string, { count: number; resetAt: number }>();
+export const runtime = "nodejs";
 
-function rateLimit(ip: string): boolean {
-  const now = Date.now();
-  const rec = attempts.get(ip);
-  if (!rec || now > rec.resetAt) {
-    attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  rec.count += 1;
-  return rec.count <= MAX_ATTEMPTS;
-}
+const allow = createRateLimiter({ windowMs: 10 * 60 * 1000, max: 8 });
+
+// A constant bcrypt hash of a random value, compared when the email is unknown
+// so response timing doesn't reveal whether an account exists.
+const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8p9q1mP0dJk7Xy0rXbE3sJ0z7uWq2";
 
 export async function POST(request: Request) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown";
-  if (!rateLimit(ip)) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
+
+  if (!allow(clientIp(request))) {
     return NextResponse.json(
       { error: "محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى." },
       { status: 429 },
@@ -52,7 +44,9 @@ export async function POST(request: Request) {
   }
 
   const admin = await prisma.admin.findUnique({ where: { email } });
-  if (!admin || !(await verifyPassword(password, admin.passwordHash))) {
+  // Always run a hash comparison to keep timing uniform (user-enumeration).
+  const ok = await verifyPassword(password, admin?.passwordHash ?? DUMMY_HASH);
+  if (!admin || !ok) {
     return NextResponse.json(
       { error: "بيانات الدخول غير صحيحة" },
       { status: 401 },

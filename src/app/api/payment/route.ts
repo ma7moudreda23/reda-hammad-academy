@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getPaymentContent, savePaymentContent, DEFAULT_PAYMENT } from "@/lib/payment";
+import { csrfGuard } from "@/lib/request-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -11,10 +12,12 @@ export async function GET() {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }
   const content = await getPaymentContent();
-  return NextResponse.json({ content });
+  return NextResponse.json({ content }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function PUT(request: Request) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
   if (!(await getSession())) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }

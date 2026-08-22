@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
+import { csrfGuard } from "@/lib/request-guard";
 
-async function guard() {
+async function guard(request: Request) {
+  const csrf = csrfGuard(request);
+  if (csrf) return csrf;
   if (!(await getSession())) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }
@@ -14,7 +17,7 @@ export async function PUT(
   request: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
-  const denied = await guard();
+  const denied = await guard(request);
   if (denied) return denied;
 
   const { id } = await ctx.params;
@@ -72,10 +75,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
-  const denied = await guard();
+  const denied = await guard(request);
   if (denied) return denied;
 
   const { id } = await ctx.params;

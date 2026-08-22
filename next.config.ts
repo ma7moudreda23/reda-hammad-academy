@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const nextConfig: NextConfig = {
+  // Don't advertise the framework/version.
+  poweredByHeader: false,
+  reactStrictMode: true,
   turbopack: {
     root: path.join(__dirname),
   },
