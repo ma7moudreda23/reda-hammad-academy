@@ -81,3 +81,21 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-brand-400);
 }
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  display: inline-flex;
+  min-width: 200%;
+  animation: ticker-scroll linear infinite;
+  will-change: transform;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}

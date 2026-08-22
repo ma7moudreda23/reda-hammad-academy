@@ -47,6 +47,10 @@ export type HomeContent = {
     subtitle: string;
     items: { title: string; body: string; imageUrl: string; link: string }[];
   };
+  ticker: {
+    enabled: boolean;
+    items: string[];
+  };
   testimonials: Testimonial[];
   cta: {
     title: string;
@@ -161,6 +165,10 @@ export const DEFAULT_HOME: HomeContent = {
   announcements: {
     title: "إعلانات المنصة",
     subtitle: "آخر الأخبار والدورات الجديدة في الأكاديمية.",
+    items: [],
+  },
+  ticker: {
+    enabled: false,
     items: [],
   },
   testimonials: [

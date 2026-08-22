@@ -397,6 +397,50 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
           </button>
         </Card>
 
+        {/* Ticker / النشرات */}
+        <Card title="النشرات (الشريط الإخباري)" desc="شريط أخبار متحرك يظهر أعلى الصفحة الرئيسية ويلفّ باستمرار. أضف عدة أخبار قصيرة.">
+          <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
+            <input type="checkbox" checked={c.ticker.enabled}
+              onChange={(e) => update("ticker", { ...c.ticker, enabled: e.target.checked })}
+              className="h-5 w-5 cursor-pointer accent-brand-600" />
+            <span className="font-bold text-brand-900">تفعيل الشريط الإخباري في الرئيسية</span>
+          </label>
+
+          <div className="space-y-2">
+            {c.ticker.items.map((item, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="flex shrink-0 flex-col">
+                  <button type="button" disabled={i === 0}
+                    onClick={() => { const items = [...c.ticker.items]; [items[i - 1], items[i]] = [items[i], items[i - 1]]; update("ticker", { ...c.ticker, items }); }}
+                    className="flex h-[18px] w-7 items-center justify-center rounded-t-md border border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">▲</button>
+                  <button type="button" disabled={i === c.ticker.items.length - 1}
+                    onClick={() => { const items = [...c.ticker.items]; [items[i + 1], items[i]] = [items[i], items[i + 1]]; update("ticker", { ...c.ticker, items }); }}
+                    className="flex h-[18px] w-7 items-center justify-center rounded-b-md border border-t-0 border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:opacity-30">▼</button>
+                </div>
+                <input
+                  value={item}
+                  onChange={(e) => { const items = [...c.ticker.items]; items[i] = e.target.value; update("ticker", { ...c.ticker, items }); }}
+                  placeholder="اكتب الخبر (مثال: خصم 40% على دورة القدرات لأول 100 مشترك)"
+                  className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-900 outline-none focus:border-brand-500"
+                />
+                <button type="button" onClick={() => update("ticker", { ...c.ticker, items: c.ticker.items.filter((_, x) => x !== i) })}
+                  className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-brand-100 text-red-500 hover:bg-red-50">
+                  <CloseIcon className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            {c.ticker.items.length === 0 && (
+              <p className="rounded-lg bg-white px-3 py-3 text-center text-sm text-brand-900/45">
+                لا توجد أخبار — اضغط «+ إضافة خبر».
+              </p>
+            )}
+          </div>
+          <button type="button" onClick={() => update("ticker", { ...c.ticker, items: [...c.ticker.items, ""] })}
+            className="cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
+            + إضافة خبر
+          </button>
+        </Card>
+
         {/* CTA */}
         <Card title="قسم الدعوة للاشتراك (CTA)">
           <Field label="العنوان" value={c.cta.title} onChange={(v) => update("cta", { ...c.cta, title: v })} />
