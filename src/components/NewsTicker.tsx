@@ -22,7 +22,7 @@ export function NewsTicker({ items }: { items: string[] }) {
         </span>
         أخبار
       </span>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative flex-1 overflow-hidden" dir="ltr">
         <div
           className="ticker-track h-full items-center whitespace-nowrap"
           style={{ animationDuration: `${duration}s` }}
@@ -30,6 +30,7 @@ export function NewsTicker({ items }: { items: string[] }) {
           {run.map((text, i) => (
             <span
               key={i}
+              dir="rtl"
               className="mx-3.5 inline-flex items-center gap-2 text-sm font-semibold"
             >
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-400" />
