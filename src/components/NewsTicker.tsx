@@ -10,8 +10,8 @@ export function NewsTicker({ items }: { items: string[] }) {
   const repeat = Math.max(2, Math.ceil(14 / clean.length));
   const group = Array.from({ length: repeat }, () => clean).flat();
   const run = [...group, ...group];
-  // Speed scales with the group so it feels consistent regardless of content.
-  const duration = Math.max(28, group.length * 3.5);
+  // Slower, readable pace — scales with the group so it stays consistent.
+  const duration = Math.max(50, group.length * 7);
 
   return (
     <div className="flex h-11 w-full items-stretch overflow-hidden bg-brand-900 text-white shadow-md" dir="rtl">
@@ -30,7 +30,7 @@ export function NewsTicker({ items }: { items: string[] }) {
           {run.map((text, i) => (
             <span
               key={i}
-              className="mx-8 inline-flex items-center gap-2.5 text-sm font-semibold"
+              className="mx-3.5 inline-flex items-center gap-2 text-sm font-semibold"
             >
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-400" />
               {text}
