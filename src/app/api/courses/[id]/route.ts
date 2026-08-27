@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { csrfGuard } from "@/lib/request-guard";
+import { CACHE_TAGS } from "@/lib/cache";
 
 async function guard(request: Request) {
   const csrf = csrfGuard(request);
@@ -53,6 +55,7 @@ export async function PUT(
   if (body.currency !== undefined) data.currency = body.currency;
   if (body.badge !== undefined) data.badge = body.badge;
   if (body.category !== undefined) data.category = body.category;
+  if (body.startAt !== undefined) data.startAt = body.startAt;
   if (body.detailsImageUrl !== undefined) data.detailsImageUrl = body.detailsImageUrl;
   if (body.paymentNote !== undefined) data.paymentNote = body.paymentNote;
   if (body.showElectronicPayment !== undefined) data.showElectronicPayment = body.showElectronicPayment;
@@ -68,6 +71,7 @@ export async function PUT(
       where: { id: courseId },
       data,
     });
+    revalidateTag(CACHE_TAGS.courses, "max");
     return NextResponse.json({ course });
   } catch {
     return NextResponse.json({ error: "تعذّر التحديث" }, { status: 400 });
@@ -84,6 +88,7 @@ export async function DELETE(
   const { id } = await ctx.params;
   try {
     await prisma.course.delete({ where: { id: Number(id) } });
+    revalidateTag(CACHE_TAGS.courses, "max");
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "تعذّر الحذف" }, { status: 400 });

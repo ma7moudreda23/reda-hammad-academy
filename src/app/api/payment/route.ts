@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { getPaymentContent, savePaymentContent, DEFAULT_PAYMENT } from "@/lib/payment";
 import { csrfGuard } from "@/lib/request-guard";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -32,5 +34,6 @@ export async function PUT(request: Request) {
     banks: Array.isArray(c.banks) ? c.banks : [],
   };
   await savePaymentContent(merged);
+  revalidateTag(CACHE_TAGS.payment, "max");
   return NextResponse.json({ ok: true, content: merged });
 }

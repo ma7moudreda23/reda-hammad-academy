@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { getHomeContent, saveHomeContent, DEFAULT_HOME } from "@/lib/content";
 import { csrfGuard } from "@/lib/request-guard";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export async function GET() {
   const content = await getHomeContent();
@@ -23,5 +25,7 @@ export async function PUT(request: Request) {
   // Merge over defaults to guarantee a complete, valid shape.
   const merged = { ...DEFAULT_HOME, ...body.content };
   await saveHomeContent(merged);
+  // Refresh the cached home content (and the ticker in the shared layout) now.
+  revalidateTag(CACHE_TAGS.home, "max");
   return NextResponse.json({ ok: true, content: merged });
 }

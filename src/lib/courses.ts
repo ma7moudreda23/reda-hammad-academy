@@ -1,6 +1,14 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { prisma, dbQuery } from "@/lib/db";
 import { PLATFORM_URL } from "@/lib/site";
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/lib/cache";
 import type { CourseView } from "@/components/CourseCard";
+
+const coursesCacheOpts = {
+  tags: [CACHE_TAGS.courses],
+  revalidate: CONTENT_REVALIDATE_SECONDS,
+};
 
 export {
   parseCurriculum,
@@ -40,31 +48,46 @@ function toView(c: {
   };
 }
 
-export async function getPublishedCourses(limit?: number): Promise<CourseView[]> {
-  const rows = await dbQuery(
-    () =>
-      prisma.course.findMany({
-        where: { isPublished: true },
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-        ...(limit ? { take: limit } : {}),
-      }),
-    [],
-  );
-  return rows.map(toView);
-}
+const loadPublishedCourses = unstable_cache(
+  async (limit?: number): Promise<CourseView[]> => {
+    const rows = await dbQuery(
+      () =>
+        prisma.course.findMany({
+          where: { isPublished: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+          ...(limit ? { take: limit } : {}),
+        }),
+      [],
+    );
+    return rows.map(toView);
+  },
+  ["published-courses"],
+  coursesCacheOpts,
+);
+export const getPublishedCourses = cache(loadPublishedCourses);
 
-export async function getFeaturedCourses(): Promise<CourseView[]> {
-  const rows = await dbQuery(
-    () =>
-      prisma.course.findMany({
-        where: { isPublished: true, isFeatured: true },
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-    [],
-  );
-  return rows.map(toView);
-}
+const loadFeaturedCourses = unstable_cache(
+  async (): Promise<CourseView[]> => {
+    const rows = await dbQuery(
+      () =>
+        prisma.course.findMany({
+          where: { isPublished: true, isFeatured: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+        }),
+      [],
+    );
+    return rows.map(toView);
+  },
+  ["featured-courses"],
+  coursesCacheOpts,
+);
+export const getFeaturedCourses = cache(loadFeaturedCourses);
 
-export async function getCourseBySlug(slug: string) {
-  return dbQuery(() => prisma.course.findUnique({ where: { slug } }), null);
-}
+const loadCourseBySlug = unstable_cache(
+  async (slug: string) => {
+    return dbQuery(() => prisma.course.findUnique({ where: { slug } }), null);
+  },
+  ["course-by-slug"],
+  coursesCacheOpts,
+);
+export const getCourseBySlug = cache(loadCourseBySlug);

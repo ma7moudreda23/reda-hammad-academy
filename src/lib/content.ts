@@ -1,4 +1,7 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { prisma, dbQuery } from "@/lib/db";
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/lib/cache";
 
 export type Feature = { title: string; description: string; icon: string };
 export type Stat = { value: string; label: string };
@@ -224,19 +227,30 @@ function deepMerge<T>(base: T, override: unknown): T {
   return result as T;
 }
 
-export async function getHomeContent(): Promise<HomeContent> {
-  // DB not ready / unreachable / slow → fall back to defaults fast (never hang).
-  const row = await dbQuery(
-    () => prisma.siteSetting.findUnique({ where: { key: HOME_CONTENT_KEY } }),
-    null,
-  );
-  if (!row?.value) return DEFAULT_HOME;
-  try {
-    return deepMerge(DEFAULT_HOME, JSON.parse(row.value));
-  } catch {
-    return DEFAULT_HOME;
-  }
-}
+// Cross-request cache: the DB is queried only on a cache miss or after the
+// revalidate window; admin saves call revalidateTag(CACHE_TAGS.home) to refresh
+// instantly. This removes the per-request DB round-trip that drives 503s.
+const loadHomeContent = unstable_cache(
+  async (): Promise<HomeContent> => {
+    // DB not ready / unreachable / slow → fall back to defaults fast (never hang).
+    const row = await dbQuery(
+      () => prisma.siteSetting.findUnique({ where: { key: HOME_CONTENT_KEY } }),
+      null,
+    );
+    if (!row?.value) return DEFAULT_HOME;
+    try {
+      return deepMerge(DEFAULT_HOME, JSON.parse(row.value));
+    } catch {
+      return DEFAULT_HOME;
+    }
+  },
+  ["home-content"],
+  { tags: [CACHE_TAGS.home], revalidate: CONTENT_REVALIDATE_SECONDS },
+);
+
+// cache() dedupes repeated calls within a single request (e.g. the layout + the
+// page both reading it).
+export const getHomeContent = cache(loadHomeContent);
 
 export async function saveHomeContent(content: HomeContent): Promise<void> {
   const value = JSON.stringify(content);

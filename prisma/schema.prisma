@@ -50,6 +50,7 @@ model Course {
   platformUrl     String   @default("") @db.Text
   badge           String   @default("")
   category        String   @default("")
+  startAt         String   @default("")
   detailsImageUrl String?  @db.Text
   paymentNote     String?  @db.Text
   showElectronicPayment Boolean @default(true)

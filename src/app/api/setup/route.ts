@@ -7,6 +7,8 @@ import {
 } from "@/lib/init-db";
 import { getSession } from "@/lib/auth";
 import { csrfGuard } from "@/lib/request-guard";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,6 +37,9 @@ async function runSetup(req: Request) {
   const result = await ensureDatabase();
   const slugs = await normalizeCourseSlugs();
   const curriculum = await ensureMawhibaCurriculum(force);
+  // Setup may seed/repair courses — drop the cached data so the site reflects it.
+  revalidateTag(CACHE_TAGS.courses, "max");
+  revalidateTag(CACHE_TAGS.home, "max");
   return NextResponse.json(
     { ...result, slugsFixed: slugs.fixed, curriculumUpdated: curriculum.updated },
     { status: result.ok ? 200 : 500 },

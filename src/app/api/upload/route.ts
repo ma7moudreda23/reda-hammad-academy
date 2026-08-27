@@ -43,6 +43,43 @@ const ALLOWED = new Set([
   "image/svg+xml",
 ]);
 
+// Raster images we re-encode: downscale to a sane max and convert to WebP,
+// which cuts the stored/served bytes a lot (better LCP, less bandwidth for
+// every visitor). Vector/animated/binary types are left untouched.
+const OPTIMIZABLE = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_DIMENSION = 1600; // px — bounds width & height, never enlarges
+const WEBP_QUALITY = 80;
+
+// Best-effort: on any sharp failure (or if sharp is unavailable) we keep the
+// original bytes so an upload never fails just because optimization couldn't run.
+async function optimizeImage(
+  type: string,
+  input: Buffer,
+): Promise<{ buffer: Buffer; mime: string }> {
+  if (!OPTIMIZABLE.has(type)) return { buffer: input, mime: type };
+  try {
+    const { default: sharp } = await import("sharp");
+    const out = await sharp(input)
+      .rotate() // respect EXIF orientation before stripping metadata
+      .resize({
+        width: MAX_DIMENSION,
+        height: MAX_DIMENSION,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: WEBP_QUALITY })
+      .toBuffer();
+    // Only keep the re-encode if it actually helped.
+    if (out.length > 0 && out.length < input.length) {
+      return { buffer: out, mime: "image/webp" };
+    }
+    return { buffer: input, mime: type };
+  } catch (e) {
+    console.error("upload: image optimize skipped", e);
+    return { buffer: input, mime: type };
+  }
+}
+
 function extFromType(type: string) {
   return (
     {
@@ -95,15 +132,17 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
+  // Downscale + re-encode raster images (no-op for other types).
+  const { buffer: data, mime } = await optimizeImage(file.type, buffer);
   try {
     // Random, unguessable id so files can't be enumerated (e.g. /api/file/4,5,6).
     const token = randomBytes(24).toString("base64url");
     await prisma.upload.create({
-      data: { token, mime: file.type, data: buffer },
+      data: { token, mime, data: Buffer.from(data) },
       select: { id: true },
     });
     // Extension in the URL lets the UI detect image/video/pdf for previews.
-    return NextResponse.json({ url: `/api/file/${token}.${extFromType(file.type)}` });
+    return NextResponse.json({ url: `/api/file/${token}.${extFromType(mime)}` });
   } catch (e) {
     console.error("upload: DB store failed", e);
     return NextResponse.json({ error: "تعذّر حفظ الملف" }, { status: 500 });

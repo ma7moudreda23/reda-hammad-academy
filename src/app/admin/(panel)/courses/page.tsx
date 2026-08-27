@@ -26,6 +26,7 @@ export default async function AdminCoursesPage() {
     currency: c.currency,
     badge: c.badge,
     category: c.category,
+    startAt: c.startAt ?? "",
     detailsImageUrl: c.detailsImageUrl ?? "",
     paymentNote: c.paymentNote ?? "",
     showElectronicPayment: c.showElectronicPayment,

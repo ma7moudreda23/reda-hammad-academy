@@ -41,6 +41,7 @@ export type AdminCourse = {
   currency: string;
   badge: string;
   category: string;
+  startAt: string;
   detailsImageUrl: string;
   paymentNote: string;
   showElectronicPayment: boolean;
@@ -83,6 +84,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     currency: "ريال سعودي",
     badge: "",
     category: "",
+    startAt: "",
     detailsImageUrl: "",
     paymentNote: "",
     showElectronicPayment: true,
@@ -461,6 +463,31 @@ export function CourseManager({
                   </datalist>
                   <span className="mt-1 block text-xs text-brand-900/45">
                     اكتب أي فئة جديدة وهتتحفظ تلقائيًا وتظهر كفلتر في صفحة الكورسات. اتركها فاضية لو «بدون فئة».
+                  </span>
+                </label>
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-bold text-brand-900">
+                    تاريخ ووقت بداية الدورة (اختياري — يظهر عدّاد تنازلي تحت صورة الدورة)
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="datetime-local"
+                      value={draft.startAt}
+                      onChange={(e) => set("startAt", e.target.value)}
+                      className="w-full rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-brand-900 outline-none focus:border-brand-500"
+                    />
+                    {draft.startAt && (
+                      <button
+                        type="button"
+                        onClick={() => set("startAt", "")}
+                        className="shrink-0 rounded-xl border border-brand-200 px-3 py-2.5 text-sm font-bold text-brand-900/70 hover:bg-brand-50"
+                      >
+                        مسح
+                      </button>
+                    )}
+                  </div>
+                  <span className="mt-1 block text-xs text-brand-900/45">
+                    اختَر اليوم والساعة. العدّاد هيعدّ تنازليًا لحد الموعد، وبعد ما يبدأ هيظهر «بدأت الدورة». اتركه فاضي لإخفاء العدّاد.
                   </span>
                 </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />

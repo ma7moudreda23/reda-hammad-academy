@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { PLATFORM_URL } from "@/lib/site";
 import { csrfGuard } from "@/lib/request-guard";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export async function GET() {
   // Admin-only: this returns unpublished/draft courses too.
@@ -54,6 +56,7 @@ export async function POST(request: Request) {
       currency: body.currency ?? "ريال سعودي",
       badge: body.badge ?? "",
       category: body.category ?? "",
+      startAt: typeof body.startAt === "string" ? body.startAt : "",
       detailsImageUrl: body.detailsImageUrl ?? "",
       paymentNote: body.paymentNote ?? "",
       showElectronicPayment: body.showElectronicPayment ?? true,
@@ -66,5 +69,6 @@ export async function POST(request: Request) {
     },
   });
 
+  revalidateTag(CACHE_TAGS.courses, "max");
   return NextResponse.json({ course }, { status: 201 });
 }

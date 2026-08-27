@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { getCourseBySlug, parseCurriculum, parseStringList } from "@/lib/courses";
 import { getPaymentContent } from "@/lib/payment";
 import { filterBanks } from "@/lib/banks";
-import { PLATFORM_URL } from "@/lib/site";
+import { PLATFORM_URL, SITE_URL, BRAND_NAME } from "@/lib/site";
 import { Reveal } from "@/components/motion";
 import { AcademicIcon, ArrowIcon, CheckIcon } from "@/components/icons";
 import { CourseCurriculum } from "@/components/CourseCurriculum";
 import { PaymentView } from "@/components/PaymentView";
+import { CourseCountdown } from "@/components/CourseCountdown";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,14 @@ export async function generateMetadata({
   return {
     title: `${course.title} | أكاديمية رضا حماد التعليمية`,
     description: course.description,
+    alternates: { canonical: `/courses/${slug}` },
+    openGraph: {
+      title: `${course.title} | أكاديمية رضا حماد التعليمية`,
+      description: course.description,
+      url: `${SITE_URL}/courses/${slug}`,
+      type: "website",
+      ...(course.imageUrl ? { images: [{ url: course.imageUrl }] } : {}),
+    },
   };
 }
 
@@ -46,8 +55,38 @@ export default async function CourseDetailPage({
   const showPayment =
     course.showElectronicPayment || courseBanks.length > 0 || !!course.paymentNote;
 
+  // Course structured data for rich results in Google.
+  const courseJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description,
+    url: `${SITE_URL}/courses/${slug}`,
+    provider: {
+      "@type": "EducationalOrganization",
+      name: BRAND_NAME,
+      url: SITE_URL,
+    },
+    ...(course.imageUrl ? { image: course.imageUrl } : {}),
+  };
+  // Only advertise an offer when the price is a plain number.
+  const numericPrice = course.price ? Number(String(course.price).replace(/[^\d.]/g, "")) : NaN;
+  if (Number.isFinite(numericPrice) && numericPrice > 0) {
+    courseJsonLd.offers = {
+      "@type": "Offer",
+      price: numericPrice,
+      priceCurrency: "SAR",
+      category: "Paid",
+      url: link,
+    };
+  }
+
   return (
     <div className="pt-28 sm:pt-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
       <section className="mx-auto max-w-5xl px-5 py-12">
         <Link
           href="/courses"
@@ -75,6 +114,7 @@ export default async function CourseDetailPage({
                 </div>
               )}
             </div>
+            <CourseCountdown startAt={course.startAt ?? ""} />
           </Reveal>
 
           <Reveal delay={0.1}>

@@ -1,3 +1,9 @@
+// Canonical URL of THIS marketing site (not the LMS platform). Used by the
+// sitemap, robots, canonical tags and JSON-LD. No trailing slash.
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://redahammadacademy.com"
+).replace(/\/$/, "");
+
 export const PLATFORM_URL =
   process.env.NEXT_PUBLIC_PLATFORM_URL ??
   "https://platform.redahammadacademy.com/";
