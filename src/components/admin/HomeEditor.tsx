@@ -385,13 +385,41 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
                     onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, imageUrl: v }; update("announcements", { ...c.announcements, items }); }} />
                 </div>
                 <div className="mt-3">
-                  <Field label="رابط «عرض التفاصيل» (اختياري)" dir="ltr" placeholder="https://... أو /courses/..." value={item.link ?? ""}
+                  <span className="mb-2 block text-sm font-bold text-brand-900">الأزرار (اختياري — تقدر تضيف أكتر من زر)</span>
+                  <div className="space-y-2">
+                    {(item.buttons ?? []).map((b, bi) => (
+                      <div key={bi} className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-100 p-2">
+                        <input value={b.text}
+                          onChange={(e) => { const items = [...c.announcements.items]; const buttons = [...(item.buttons ?? [])]; buttons[bi] = { ...b, text: e.target.value }; items[i] = { ...item, buttons }; update("announcements", { ...c.announcements, items }); }}
+                          placeholder="نص الزر (مثال: المستوى الأول)"
+                          className="min-w-[140px] flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-900 outline-none focus:border-brand-500" />
+                        <input value={b.link} dir="ltr"
+                          onChange={(e) => { const items = [...c.announcements.items]; const buttons = [...(item.buttons ?? [])]; buttons[bi] = { ...b, link: e.target.value }; items[i] = { ...item, buttons }; update("announcements", { ...c.announcements, items }); }}
+                          placeholder="/courses/... أو رابط كامل"
+                          className="min-w-[160px] flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-900 outline-none focus:border-brand-500" />
+                        <button type="button" onClick={() => { const items = [...c.announcements.items]; items[i] = { ...item, buttons: (item.buttons ?? []).filter((_, x) => x !== bi) }; update("announcements", { ...c.announcements, items }); }}
+                          className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-brand-100 text-red-500 hover:bg-red-50">
+                          <CloseIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => { const items = [...c.announcements.items]; items[i] = { ...item, buttons: [...(item.buttons ?? []), { text: "", link: "" }] }; update("announcements", { ...c.announcements, items }); }}
+                    className="mt-2 cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
+                    + إضافة زر
+                  </button>
+                  <p className="mt-2 text-xs text-brand-900/45">
+                    لو مسيبت الأزرار فاضية، هيظهر زر «عرض التفاصيل» تلقائيًا لو حطّيت رابط تحت.
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <Field label="رابط «عرض التفاصيل» (يُستخدم لو مفيش أزرار فوق)" dir="ltr" placeholder="https://... أو /courses/..." value={item.link ?? ""}
                     onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, link: v }; update("announcements", { ...c.announcements, items }); }} />
                 </div>
               </div>
             ))}
           </div>
-          <button type="button" onClick={() => update("announcements", { ...c.announcements, items: [...c.announcements.items, { title: "", body: "", imageUrl: "", link: "" }] })}
+          <button type="button" onClick={() => update("announcements", { ...c.announcements, items: [...c.announcements.items, { title: "", body: "", imageUrl: "", link: "", buttons: [] }] })}
             className="cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
             + إضافة إعلان
           </button>
@@ -484,12 +512,33 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             onChange={(v) => update("popup", { ...c.popup, title: v })} placeholder="مثال: دورة القدرات الجديدة" />
           <Area label="النص (اختياري)" rows={3} value={c.popup.body}
             onChange={(v) => update("popup", { ...c.popup, body: v })} placeholder="اكتب تفاصيل الإعلان..." />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="نص الزر (اختياري)" value={c.popup.buttonText}
-              onChange={(v) => update("popup", { ...c.popup, buttonText: v })} placeholder="مثال: سجّل الآن" />
-            <Field label="رابط الزر (اختياري)" dir="ltr" value={c.popup.buttonLink}
-              onChange={(v) => update("popup", { ...c.popup, buttonLink: v })} placeholder="/courses/... أو رابط كامل" />
+
+          <div>
+            <span className="mb-2 block text-sm font-bold text-brand-900">الأزرار (اختياري — تقدر تضيف أكتر من زر)</span>
+            <div className="space-y-2">
+              {(c.popup.buttons ?? []).map((b, i) => (
+                <div key={i} className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-100 p-2">
+                  <input value={b.text}
+                    onChange={(e) => { const buttons = [...(c.popup.buttons ?? [])]; buttons[i] = { ...b, text: e.target.value }; update("popup", { ...c.popup, buttons }); }}
+                    placeholder="نص الزر (مثال: المستوى الأول)"
+                    className="min-w-[140px] flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-900 outline-none focus:border-brand-500" />
+                  <input value={b.link} dir="ltr"
+                    onChange={(e) => { const buttons = [...(c.popup.buttons ?? [])]; buttons[i] = { ...b, link: e.target.value }; update("popup", { ...c.popup, buttons }); }}
+                    placeholder="/courses/... أو رابط كامل"
+                    className="min-w-[160px] flex-1 rounded-lg border border-brand-200 bg-white px-3 py-2 text-sm text-brand-900 outline-none focus:border-brand-500" />
+                  <button type="button" onClick={() => update("popup", { ...c.popup, buttons: (c.popup.buttons ?? []).filter((_, x) => x !== i) })}
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-brand-100 text-red-500 hover:bg-red-50">
+                    <CloseIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={() => update("popup", { ...c.popup, buttons: [...(c.popup.buttons ?? []), { text: "", link: "" }] })}
+              className="mt-2 cursor-pointer rounded-lg bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 hover:bg-brand-100">
+              + إضافة زر
+            </button>
           </div>
+
           <p className="text-xs text-brand-900/45">
             الإعلان بيظهر مرة واحدة لكل زائر لحد ما يقفله. لو غيّرت محتواه، هيظهر تاني للجميع تلقائيًا.
           </p>

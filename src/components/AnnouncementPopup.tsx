@@ -11,7 +11,8 @@ type Popup = HomeContent["popup"];
 // announcement, the signature changes, so a viewer who dismissed the old one
 // sees the new one. (Not for security — just cache-busting the dismissal.)
 function signature(p: Popup): string {
-  const raw = [p.title, p.body, p.mediaType, p.imageUrl, p.videoUrl, p.buttonText, p.buttonLink].join("|");
+  const btns = (p.buttons ?? []).map((b) => `${b.text}>${b.link}`).join(",");
+  const raw = [p.title, p.body, p.mediaType, p.imageUrl, p.videoUrl, btns].join("|");
   let h = 0;
   for (let i = 0; i < raw.length; i++) h = (h * 31 + raw.charCodeAt(i)) | 0;
   return String(h >>> 0);
@@ -60,7 +61,8 @@ export function AnnouncementPopup({ popup }: { popup: Popup }) {
 
   const hasImage = popup.mediaType === "image" && !!popup.imageUrl;
   const hasVideo = popup.mediaType === "video" && !!popup.videoUrl;
-  const hasCta = !!popup.buttonText && !!popup.buttonLink;
+  const buttons = (popup.buttons ?? []).filter((b) => b.text.trim() && b.link.trim());
+  const hasCta = buttons.length > 0;
 
   return (
     <div
@@ -109,12 +111,19 @@ export function AnnouncementPopup({ popup }: { popup: Popup }) {
               <p className="mt-3 whitespace-pre-line leading-8 text-brand-900/70">{popup.body}</p>
             )}
             {hasCta && (
-              <a
-                href={popup.buttonLink}
-                className="mt-5 inline-flex items-center justify-center rounded-xl bg-brand-600 px-7 py-3 font-extrabold text-white shadow-md shadow-brand-600/30 transition-colors hover:bg-brand-700"
-              >
-                {popup.buttonText}
-              </a>
+              <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+                {buttons.map((b, i) => (
+                  <a
+                    key={i}
+                    href={b.link}
+                    target={b.link.startsWith("http") ? "_blank" : undefined}
+                    rel={b.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="inline-flex items-center justify-center rounded-xl bg-brand-600 px-6 py-3 font-extrabold text-white shadow-md shadow-brand-600/30 transition-colors hover:bg-brand-700"
+                  >
+                    {b.text}
+                  </a>
+                ))}
+              </div>
             )}
           </div>
         )}

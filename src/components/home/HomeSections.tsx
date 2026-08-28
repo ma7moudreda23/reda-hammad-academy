@@ -227,17 +227,40 @@ export function HomeSections({
                     {a.body && (
                       <p className="mt-2 whitespace-pre-line leading-7 text-brand-900/65">{a.body}</p>
                     )}
-                    {a.link && (
-                      <a
-                        href={a.link}
-                        target={a.link.startsWith("http") ? "_blank" : undefined}
-                        rel={a.link.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="mt-4 inline-flex w-fit items-center gap-1.5 self-start rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-700"
-                      >
-                        عرض التفاصيل
-                        <ArrowIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                      </a>
-                    )}
+                    {(() => {
+                      const btns = (a.buttons ?? []).filter((b) => b.text.trim() && b.link.trim());
+                      if (btns.length > 0) {
+                        return (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {btns.map((b, bi) => (
+                              <a
+                                key={bi}
+                                href={b.link}
+                                target={b.link.startsWith("http") ? "_blank" : undefined}
+                                rel={b.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                                className="inline-flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-700"
+                              >
+                                {b.text}
+                              </a>
+                            ))}
+                          </div>
+                        );
+                      }
+                      if (a.link) {
+                        return (
+                          <a
+                            href={a.link}
+                            target={a.link.startsWith("http") ? "_blank" : undefined}
+                            rel={a.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                            className="mt-4 inline-flex w-fit items-center gap-1.5 self-start rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-700"
+                          >
+                            عرض التفاصيل
+                            <ArrowIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                          </a>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                 </div>
               </Reveal>

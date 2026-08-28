@@ -4,6 +4,7 @@ import { prisma, dbQuery } from "@/lib/db";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/lib/cache";
 
 export type Feature = { title: string; description: string; icon: string };
+export type CtaButton = { text: string; link: string };
 export type Stat = { value: string; label: string };
 export type VideoItem = { title: string; url: string };
 export type Testimonial = { name: string; role: string; quote: string };
@@ -48,7 +49,13 @@ export type HomeContent = {
   announcements: {
     title: string;
     subtitle: string;
-    items: { title: string; body: string; imageUrl: string; link: string }[];
+    items: {
+      title: string;
+      body: string;
+      imageUrl: string;
+      link: string;
+      buttons: CtaButton[];
+    }[];
   };
   ticker: {
     enabled: boolean;
@@ -61,8 +68,7 @@ export type HomeContent = {
     mediaType: "none" | "image" | "video";
     imageUrl: string;
     videoUrl: string;
-    buttonText: string;
-    buttonLink: string;
+    buttons: CtaButton[];
   };
   testimonials: Testimonial[];
   cta: {
@@ -191,8 +197,7 @@ export const DEFAULT_HOME: HomeContent = {
     mediaType: "none",
     imageUrl: "",
     videoUrl: "",
-    buttonText: "",
-    buttonLink: "",
+    buttons: [],
   },
   testimonials: [
     {
