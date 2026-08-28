@@ -441,6 +441,60 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
           </button>
         </Card>
 
+        {/* Popup / الإعلان المنبثق */}
+        <Card title="الإعلان المنبثق (Popup)" desc="نافذة تظهر للزائر أول ما يدخل الصفحة الرئيسية، ويقدر يقفلها. تقدر تحطّ صورة أو فيديو أو نص أو زر.">
+          <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
+            <input type="checkbox" checked={c.popup.enabled}
+              onChange={(e) => update("popup", { ...c.popup, enabled: e.target.checked })}
+              className="h-5 w-5 cursor-pointer accent-brand-600" />
+            <span className="font-bold text-brand-900">تفعيل الإعلان المنبثق</span>
+          </label>
+
+          <div>
+            <span className="mb-1.5 block text-sm font-bold text-brand-900">نوع الوسائط</span>
+            <div className="flex flex-wrap gap-2">
+              {([
+                { key: "none", label: "بدون وسائط (نص فقط)" },
+                { key: "image", label: "صورة" },
+                { key: "video", label: "فيديو" },
+              ] as const).map((o) => (
+                <button key={o.key} type="button"
+                  onClick={() => update("popup", { ...c.popup, mediaType: o.key })}
+                  className={`rounded-xl border px-4 py-2 text-sm font-bold transition-colors ${
+                    c.popup.mediaType === o.key
+                      ? "border-brand-600 bg-brand-600 text-white"
+                      : "border-brand-200 bg-white text-brand-900/70 hover:bg-brand-50"
+                  }`}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {c.popup.mediaType === "image" && (
+            <MediaUpload label="صورة الإعلان" value={c.popup.imageUrl}
+              onChange={(v) => update("popup", { ...c.popup, imageUrl: v })} />
+          )}
+          {c.popup.mediaType === "video" && (
+            <MediaUpload label="فيديو الإعلان (ملف أو رابط يوتيوب)" accept="video/*" value={c.popup.videoUrl}
+              onChange={(v) => update("popup", { ...c.popup, videoUrl: v })} />
+          )}
+
+          <Field label="العنوان (اختياري)" value={c.popup.title}
+            onChange={(v) => update("popup", { ...c.popup, title: v })} placeholder="مثال: دورة القدرات الجديدة" />
+          <Area label="النص (اختياري)" rows={3} value={c.popup.body}
+            onChange={(v) => update("popup", { ...c.popup, body: v })} placeholder="اكتب تفاصيل الإعلان..." />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="نص الزر (اختياري)" value={c.popup.buttonText}
+              onChange={(v) => update("popup", { ...c.popup, buttonText: v })} placeholder="مثال: سجّل الآن" />
+            <Field label="رابط الزر (اختياري)" dir="ltr" value={c.popup.buttonLink}
+              onChange={(v) => update("popup", { ...c.popup, buttonLink: v })} placeholder="/courses/... أو رابط كامل" />
+          </div>
+          <p className="text-xs text-brand-900/45">
+            الإعلان بيظهر مرة واحدة لكل زائر لحد ما يقفله. لو غيّرت محتواه، هيظهر تاني للجميع تلقائيًا.
+          </p>
+        </Card>
+
         {/* CTA */}
         <Card title="قسم الدعوة للاشتراك (CTA)">
           <Field label="العنوان" value={c.cta.title} onChange={(v) => update("cta", { ...c.cta, title: v })} />

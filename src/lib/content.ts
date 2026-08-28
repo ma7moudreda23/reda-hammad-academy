@@ -54,6 +54,16 @@ export type HomeContent = {
     enabled: boolean;
     items: string[];
   };
+  popup: {
+    enabled: boolean;
+    title: string;
+    body: string;
+    mediaType: "none" | "image" | "video";
+    imageUrl: string;
+    videoUrl: string;
+    buttonText: string;
+    buttonLink: string;
+  };
   testimonials: Testimonial[];
   cta: {
     title: string;
@@ -173,6 +183,16 @@ export const DEFAULT_HOME: HomeContent = {
   ticker: {
     enabled: false,
     items: [],
+  },
+  popup: {
+    enabled: false,
+    title: "",
+    body: "",
+    mediaType: "none",
+    imageUrl: "",
+    videoUrl: "",
+    buttonText: "",
+    buttonLink: "",
   },
   testimonials: [
     {
