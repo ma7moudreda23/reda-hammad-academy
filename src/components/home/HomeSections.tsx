@@ -199,6 +199,15 @@ export function HomeSections({
         </section>
       )}
 
+      {/* REGISTRATION GUIDE */}
+      {content.registrationGuide?.enabled && (
+        <div id="register" className="scroll-mt-28 pt-20">
+          <Reveal>
+            <RegistrationGuide data={content.registrationGuide} />
+          </Reveal>
+        </div>
+      )}
+
       {content.announcements.items.length > 0 && (
         <section id="announcements" className="mx-auto max-w-6xl px-5 pt-20 scroll-mt-28">
           <Reveal className="mx-auto max-w-2xl text-center">
@@ -449,15 +458,6 @@ export function HomeSections({
             ))}
           </div>
         </section>
-      )}
-
-      {/* REGISTRATION GUIDE */}
-      {content.registrationGuide?.enabled && (
-        <div id="register" className="scroll-mt-28 pt-20">
-          <Reveal>
-            <RegistrationGuide data={content.registrationGuide} />
-          </Reveal>
-        </div>
       )}
 
       {/* TESTIMONIALS */}
