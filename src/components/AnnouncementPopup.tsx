@@ -90,8 +90,14 @@ export function AnnouncementPopup({ popup }: { popup: Popup }) {
           </div>
         )}
         {hasImage && !hasVideo && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={popup.imageUrl} alt={popup.title || "إعلان"} className="max-h-[55vh] w-full object-cover" />
+          <div className="flex w-full items-center justify-center bg-brand-50">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={popup.imageUrl}
+              alt={popup.title || "إعلان"}
+              className="max-h-[70vh] w-full object-contain"
+            />
+          </div>
         )}
 
         {(popup.title || popup.body || hasCta) && (
