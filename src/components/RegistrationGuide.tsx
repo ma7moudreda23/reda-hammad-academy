@@ -9,9 +9,13 @@ type Guide = HomeContent["registrationGuide"];
 export function RegistrationGuide({
   data,
   className = "",
+  bare = false,
 }: {
   data: Guide;
   className?: string;
+  // bare = drop the full-width section wrapper (for embedding inside an
+  // already-constrained container, e.g. the course page).
+  bare?: boolean;
 }) {
   if (!data) return null;
   const hasVideo = data.mediaType === "video" && !!data.videoUrl;
@@ -19,8 +23,10 @@ export function RegistrationGuide({
   const hasMedia = hasVideo || hasImage;
   if (!data.body && !hasMedia && !data.subtitle) return null;
 
+  const Wrapper = bare ? "div" : "section";
+
   return (
-    <section className={`mx-auto max-w-6xl px-5 ${className}`}>
+    <Wrapper className={bare ? className : `mx-auto max-w-6xl px-5 ${className}`}>
       <div className="rounded-card border border-brand-100 bg-white p-6 shadow-sm sm:p-8">
         <div className="text-center">
           <h2 className="text-2xl font-black text-brand-900 sm:text-3xl">{data.title}</h2>
@@ -58,6 +64,6 @@ export function RegistrationGuide({
           )}
         </div>
       </div>
-    </section>
+    </Wrapper>
   );
 }

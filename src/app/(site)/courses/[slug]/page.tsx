@@ -194,6 +194,12 @@ export default async function CourseDetailPage({
           </Reveal>
         )}
 
+        {guide && (
+          <Reveal className="mt-14">
+            <RegistrationGuide data={guide} bare />
+          </Reveal>
+        )}
+
         {(course.longDescription || course.detailsImageUrl) && (
           <Reveal className="mt-14">
             <h2 className="flex items-center gap-2 text-2xl font-extrabold text-brand-900">
@@ -220,12 +226,6 @@ export default async function CourseDetailPage({
 
         <CourseCurriculum sections={curriculum} />
       </section>
-
-      {guide && (
-        <div className="pb-16">
-          <RegistrationGuide data={guide} />
-        </div>
-      )}
     </div>
   );
 }
