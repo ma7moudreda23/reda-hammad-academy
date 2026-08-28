@@ -44,6 +44,7 @@ export type AdminCourse = {
   startAt: string;
   registrationOpen: boolean;
   showRegistrationGuide: boolean;
+  registrationGuidePosition: string;
   showSchedule: boolean;
   scheduleTitle: string;
   scheduleUrl: string;
@@ -93,6 +94,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     startAt: "",
     registrationOpen: false,
     showRegistrationGuide: false,
+    registrationGuidePosition: "afterPayment",
     showSchedule: false,
     scheduleTitle: "جدول الدورة",
     scheduleUrl: "",
@@ -547,15 +549,43 @@ export function CourseManager({
                     );
                   })()}
                 </div>
-                <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={draft.showRegistrationGuide}
-                    onChange={(e) => set("showRegistrationGuide", e.target.checked)}
-                    className="h-5 w-5 cursor-pointer accent-brand-600"
-                  />
-                  <span className="font-bold text-brand-900">إظهار قسم «طريقة التسجيل» في صفحة هذه الدورة</span>
-                </label>
+                <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={draft.showRegistrationGuide}
+                      onChange={(e) => set("showRegistrationGuide", e.target.checked)}
+                      className="h-5 w-5 cursor-pointer accent-brand-600"
+                    />
+                    <span className="font-bold text-brand-900">إظهار قسم «طريقة التسجيل» في صفحة هذه الدورة</span>
+                  </label>
+                  {draft.showRegistrationGuide && (
+                    <div className="mt-3">
+                      <span className="mb-1.5 block text-sm font-bold text-brand-900">مكان القسم في صفحة الدورة</span>
+                      <div className="flex flex-wrap gap-2">
+                        {([
+                          { key: "top", label: "في الأعلى (بعد بيانات الدورة)" },
+                          { key: "afterPayment", label: "بعد طرق الدفع" },
+                          { key: "afterDetails", label: "بعد تفاصيل الكورس" },
+                          { key: "bottom", label: "في الأسفل (بعد المحتوى)" },
+                        ] as const).map((o) => (
+                          <button key={o.key} type="button"
+                            onClick={() => set("registrationGuidePosition", o.key)}
+                            className={`rounded-xl border px-4 py-2 text-sm font-bold transition-colors ${
+                              draft.registrationGuidePosition === o.key
+                                ? "border-brand-600 bg-brand-600 text-white"
+                                : "border-brand-200 bg-white text-brand-900/70 hover:bg-brand-50"
+                            }`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-brand-900/45">
+                        محتوى القسم نفسه بتظبطه من «محتوى الرئيسية ← طريقة التسجيل في الدورة».
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* Course schedule */}
                 <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">

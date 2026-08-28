@@ -58,6 +58,7 @@ export async function PUT(
   if (body.startAt !== undefined) data.startAt = body.startAt;
   if (body.registrationOpen !== undefined) data.registrationOpen = body.registrationOpen;
   if (body.showRegistrationGuide !== undefined) data.showRegistrationGuide = body.showRegistrationGuide;
+  if (body.registrationGuidePosition !== undefined) data.registrationGuidePosition = body.registrationGuidePosition;
   if (body.showSchedule !== undefined) data.showSchedule = body.showSchedule;
   if (body.scheduleTitle !== undefined) data.scheduleTitle = body.scheduleTitle;
   if (body.scheduleUrl !== undefined) data.scheduleUrl = body.scheduleUrl;

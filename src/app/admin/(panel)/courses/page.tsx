@@ -29,6 +29,7 @@ export default async function AdminCoursesPage() {
     startAt: c.startAt ?? "",
     registrationOpen: c.registrationOpen ?? false,
     showRegistrationGuide: c.showRegistrationGuide ?? false,
+    registrationGuidePosition: c.registrationGuidePosition ?? "afterPayment",
     showSchedule: c.showSchedule ?? false,
     scheduleTitle: c.scheduleTitle ?? "",
     scheduleUrl: c.scheduleUrl ?? "",

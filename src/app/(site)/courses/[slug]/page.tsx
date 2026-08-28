@@ -71,6 +71,14 @@ export default async function CourseDetailPage({
       </Reveal>
     ) : null;
 
+  // Renders the "how to register" guide only at the position the admin picked.
+  const guideAt = (pos: string) =>
+    guide && (course.registrationGuidePosition || "afterPayment") === pos ? (
+      <Reveal className="mt-14">
+        <RegistrationGuide data={guide} bare />
+      </Reveal>
+    ) : null;
+
   // Course structured data for rich results in Google.
   const courseJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -191,6 +199,7 @@ export default async function CourseDetailPage({
           </Reveal>
         </div>
 
+        {guideAt("top")}
         {scheduleAt("top")}
 
         {showPayment && (
@@ -207,13 +216,8 @@ export default async function CourseDetailPage({
           </Reveal>
         )}
 
+        {guideAt("afterPayment")}
         {scheduleAt("afterPayment")}
-
-        {guide && (
-          <Reveal className="mt-14">
-            <RegistrationGuide data={guide} bare />
-          </Reveal>
-        )}
 
         {(course.longDescription || course.detailsImageUrl) && (
           <Reveal className="mt-14">
@@ -239,10 +243,12 @@ export default async function CourseDetailPage({
           </Reveal>
         )}
 
+        {guideAt("afterDetails")}
         {scheduleAt("afterDetails")}
 
         <CourseCurriculum sections={curriculum} />
 
+        {guideAt("bottom")}
         {scheduleAt("bottom")}
       </section>
     </div>

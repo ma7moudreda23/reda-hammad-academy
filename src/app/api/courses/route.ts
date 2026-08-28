@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       startAt: typeof body.startAt === "string" ? body.startAt : "",
       registrationOpen: body.registrationOpen ?? false,
       showRegistrationGuide: body.showRegistrationGuide ?? false,
+      registrationGuidePosition: body.registrationGuidePosition ?? "afterPayment",
       showSchedule: body.showSchedule ?? false,
       scheduleTitle: body.scheduleTitle ?? "",
       scheduleUrl: body.scheduleUrl ?? "",
