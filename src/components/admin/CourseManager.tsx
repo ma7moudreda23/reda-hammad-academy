@@ -44,6 +44,10 @@ export type AdminCourse = {
   startAt: string;
   registrationOpen: boolean;
   showRegistrationGuide: boolean;
+  showSchedule: boolean;
+  scheduleTitle: string;
+  scheduleUrl: string;
+  schedulePosition: string;
   detailsImageUrl: string;
   paymentNote: string;
   showElectronicPayment: boolean;
@@ -89,6 +93,10 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     startAt: "",
     registrationOpen: false,
     showRegistrationGuide: false,
+    showSchedule: false,
+    scheduleTitle: "جدول الدورة",
+    scheduleUrl: "",
+    schedulePosition: "afterPayment",
     detailsImageUrl: "",
     paymentNote: "",
     showElectronicPayment: true,
@@ -548,6 +556,49 @@ export function CourseManager({
                   />
                   <span className="font-bold text-brand-900">إظهار قسم «طريقة التسجيل» في صفحة هذه الدورة</span>
                 </label>
+
+                {/* Course schedule */}
+                <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={draft.showSchedule}
+                      onChange={(e) => set("showSchedule", e.target.checked)}
+                      className="h-5 w-5 cursor-pointer accent-brand-600"
+                    />
+                    <span className="font-bold text-brand-900">إظهار قسم «جدول الدورة» (صورة أو PDF)</span>
+                  </label>
+                  {draft.showSchedule && (
+                    <div className="mt-3 space-y-3">
+                      <Field label="عنوان القسم" value={draft.scheduleTitle}
+                        onChange={(v) => set("scheduleTitle", v)} placeholder="مثال: جدول الدورة" />
+                      <MediaUpload label="ملف الجدول (صورة أو PDF)" accept="image/*,application/pdf"
+                        value={draft.scheduleUrl} onChange={(v) => set("scheduleUrl", v)} />
+                      <div>
+                        <span className="mb-1.5 block text-sm font-bold text-brand-900">مكان القسم في صفحة الدورة</span>
+                        <div className="flex flex-wrap gap-2">
+                          {([
+                            { key: "top", label: "في الأعلى (بعد بيانات الدورة)" },
+                            { key: "afterPayment", label: "بعد طرق الدفع" },
+                            { key: "afterDetails", label: "بعد تفاصيل الكورس" },
+                            { key: "bottom", label: "في الأسفل (بعد المحتوى)" },
+                          ] as const).map((o) => (
+                            <button key={o.key} type="button"
+                              onClick={() => set("schedulePosition", o.key)}
+                              className={`rounded-xl border px-4 py-2 text-sm font-bold transition-colors ${
+                                draft.schedulePosition === o.key
+                                  ? "border-brand-600 bg-brand-600 text-white"
+                                  : "border-brand-200 bg-white text-brand-900/70 hover:bg-brand-50"
+                              }`}>
+                              {o.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
                 <Field label="الترتيب" value={String(draft.sortOrder)} onChange={(v) => set("sortOrder", Number(v) || 0)} />
 

@@ -12,6 +12,7 @@ import { CourseCurriculum } from "@/components/CourseCurriculum";
 import { PaymentView } from "@/components/PaymentView";
 import { CourseCountdown } from "@/components/CourseCountdown";
 import { RegistrationGuide } from "@/components/RegistrationGuide";
+import { CourseSchedule } from "@/components/CourseSchedule";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,16 @@ export default async function CourseDetailPage({
     : [];
   const showPayment =
     course.showElectronicPayment || courseBanks.length > 0 || !!course.paymentNote;
+
+  // Renders the course schedule only at the position the admin picked.
+  const scheduleAt = (pos: string) =>
+    course.showSchedule &&
+    course.scheduleUrl &&
+    (course.schedulePosition || "afterPayment") === pos ? (
+      <Reveal className="mt-14">
+        <CourseSchedule url={course.scheduleUrl} title={course.scheduleTitle} />
+      </Reveal>
+    ) : null;
 
   // Course structured data for rich results in Google.
   const courseJsonLd: Record<string, unknown> = {
@@ -180,6 +191,8 @@ export default async function CourseDetailPage({
           </Reveal>
         </div>
 
+        {scheduleAt("top")}
+
         {showPayment && (
           <Reveal className="mt-14">
             <h2 className="mb-5 text-2xl font-extrabold text-brand-900">طرق الدفع</h2>
@@ -193,6 +206,8 @@ export default async function CourseDetailPage({
             />
           </Reveal>
         )}
+
+        {scheduleAt("afterPayment")}
 
         {guide && (
           <Reveal className="mt-14">
@@ -224,7 +239,11 @@ export default async function CourseDetailPage({
           </Reveal>
         )}
 
+        {scheduleAt("afterDetails")}
+
         <CourseCurriculum sections={curriculum} />
+
+        {scheduleAt("bottom")}
       </section>
     </div>
   );

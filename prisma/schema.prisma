@@ -53,6 +53,10 @@ model Course {
   startAt         String   @default("")
   registrationOpen Boolean @default(false)
   showRegistrationGuide Boolean @default(false)
+  showSchedule    Boolean  @default(false)
+  scheduleTitle   String   @default("")
+  scheduleUrl     String   @default("") @db.Text
+  schedulePosition String  @default("afterPayment")
   detailsImageUrl String?  @db.Text
   paymentNote     String?  @db.Text
   showElectronicPayment Boolean @default(true)
