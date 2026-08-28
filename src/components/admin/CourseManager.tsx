@@ -42,6 +42,7 @@ export type AdminCourse = {
   badge: string;
   category: string;
   startAt: string;
+  registrationOpen: boolean;
   detailsImageUrl: string;
   paymentNote: string;
   showElectronicPayment: boolean;
@@ -85,6 +86,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     badge: "",
     category: "",
     startAt: "",
+    registrationOpen: false,
     detailsImageUrl: "",
     paymentNote: "",
     showElectronicPayment: true,
@@ -465,31 +467,76 @@ export function CourseManager({
                     اكتب أي فئة جديدة وهتتحفظ تلقائيًا وتظهر كفلتر في صفحة الكورسات. اتركها فاضية لو «بدون فئة».
                   </span>
                 </label>
-                <label className="block">
-                  <span className="mb-1.5 block text-sm font-bold text-brand-900">
-                    تاريخ ووقت بداية الدورة (اختياري — يظهر عدّاد تنازلي تحت صورة الدورة)
+                <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4">
+                  <span className="mb-2 block text-sm font-bold text-brand-900">
+                    ما يظهر تحت صورة الدورة
                   </span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="datetime-local"
-                      value={draft.startAt}
-                      onChange={(e) => set("startAt", e.target.value)}
-                      className="w-full rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-brand-900 outline-none focus:border-brand-500"
-                    />
-                    {draft.startAt && (
-                      <button
-                        type="button"
-                        onClick={() => set("startAt", "")}
-                        className="shrink-0 rounded-xl border border-brand-200 px-3 py-2.5 text-sm font-bold text-brand-900/70 hover:bg-brand-50"
-                      >
-                        مسح
-                      </button>
-                    )}
-                  </div>
-                  <span className="mt-1 block text-xs text-brand-900/45">
-                    اختَر اليوم والساعة. العدّاد هيعدّ تنازليًا لحد الموعد، وبعد ما يبدأ هيظهر «بدأت الدورة». اتركه فاضي لإخفاء العدّاد.
-                  </span>
-                </label>
+                  {(() => {
+                    const mode: "none" | "countdown" | "open" = draft.registrationOpen
+                      ? "open"
+                      : draft.startAt
+                        ? "countdown"
+                        : "none";
+                    const opts: { key: "none" | "countdown" | "open"; label: string }[] = [
+                      { key: "none", label: "بدون" },
+                      { key: "countdown", label: "عدّاد تنازلي لموعد" },
+                      { key: "open", label: "تم فتح باب التسجيل" },
+                    ];
+                    return (
+                      <>
+                        <div className="flex flex-wrap gap-2">
+                          {opts.map((o) => (
+                            <button
+                              key={o.key}
+                              type="button"
+                              onClick={() => {
+                                if (o.key === "open") {
+                                  setDraft((d) =>
+                                    d ? { ...d, registrationOpen: true, startAt: "" } : d,
+                                  );
+                                } else if (o.key === "none") {
+                                  setDraft((d) =>
+                                    d ? { ...d, registrationOpen: false, startAt: "" } : d,
+                                  );
+                                } else {
+                                  set("registrationOpen", false);
+                                }
+                              }}
+                              className={`rounded-xl border px-4 py-2 text-sm font-bold transition-colors ${
+                                mode === o.key
+                                  ? "border-brand-600 bg-brand-600 text-white"
+                                  : "border-brand-200 bg-white text-brand-900/70 hover:bg-brand-50"
+                              }`}
+                            >
+                              {o.label}
+                            </button>
+                          ))}
+                        </div>
+                        {mode === "countdown" && (
+                          <label className="mt-3 block">
+                            <span className="mb-1.5 block text-xs font-bold text-brand-900/70">
+                              اختَر تاريخ ووقت بداية الدورة
+                            </span>
+                            <input
+                              type="datetime-local"
+                              value={draft.startAt}
+                              onChange={(e) => set("startAt", e.target.value)}
+                              className="w-full rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-brand-900 outline-none focus:border-brand-500"
+                            />
+                            <span className="mt-1 block text-xs text-brand-900/45">
+                              العدّاد هيعدّ تنازليًا لحد الموعد، وبعد ما يبدأ هيظهر «بدأت الدورة».
+                            </span>
+                          </label>
+                        )}
+                        {mode === "open" && (
+                          <p className="mt-3 text-xs text-brand-900/55">
+                            هيظهر تحت صورة الدورة: <span className="font-bold text-brand-800">«تم فتح باب التسجيل في الدورة»</span>
+                          </p>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
                 <Field label="الترتيب" value={String(draft.sortOrder)} onChange={(v) => set("sortOrder", Number(v) || 0)} />
 

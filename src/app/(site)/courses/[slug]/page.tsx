@@ -114,7 +114,10 @@ export default async function CourseDetailPage({
                 </div>
               )}
             </div>
-            <CourseCountdown startAt={course.startAt ?? ""} />
+            <CourseCountdown
+              startAt={course.startAt ?? ""}
+              registrationOpen={course.registrationOpen ?? false}
+            />
           </Reveal>
 
           <Reveal delay={0.1}>

@@ -27,10 +27,16 @@ const UNITS: { key: keyof Remaining; label: string }[] = [
   { key: "seconds", label: "ثانية" },
 ];
 
-export function CourseCountdown({ startAt }: { startAt: string }) {
-  // Parse once; an empty/invalid value disables the whole widget.
+export function CourseCountdown({
+  startAt,
+  registrationOpen = false,
+}: {
+  startAt: string;
+  registrationOpen?: boolean;
+}) {
+  // "Registration open" takes priority — a static badge, no timer needed.
   const target = startAt ? new Date(startAt).getTime() : NaN;
-  const valid = Number.isFinite(target);
+  const valid = !registrationOpen && Number.isFinite(target);
 
   // Start null so the server render and the first client render match (avoids a
   // hydration mismatch); the real value fills in after mount.
@@ -44,6 +50,21 @@ export function CourseCountdown({ startAt }: { startAt: string }) {
     const id = setInterval(() => setRemaining(diff(target)), 1000);
     return () => clearInterval(id);
   }, [target, valid]);
+
+  // Registration-open badge (static, shown regardless of any date).
+  if (registrationOpen) {
+    return (
+      <div className="mt-4 flex items-center justify-center gap-2.5 rounded-card border border-accent-300 bg-accent-500/15 px-5 py-3.5 text-center">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-500/60" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent-600" />
+        </span>
+        <span className="text-base font-black text-brand-800">
+          تم فتح باب التسجيل في الدورة
+        </span>
+      </div>
+    );
+  }
 
   if (!valid) return null;
 

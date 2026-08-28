@@ -51,6 +51,7 @@ model Course {
   badge           String   @default("")
   category        String   @default("")
   startAt         String   @default("")
+  registrationOpen Boolean @default(false)
   detailsImageUrl String?  @db.Text
   paymentNote     String?  @db.Text
   showElectronicPayment Boolean @default(true)

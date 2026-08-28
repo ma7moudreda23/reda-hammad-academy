@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       badge: body.badge ?? "",
       category: body.category ?? "",
       startAt: typeof body.startAt === "string" ? body.startAt : "",
+      registrationOpen: body.registrationOpen ?? false,
       detailsImageUrl: body.detailsImageUrl ?? "",
       paymentNote: body.paymentNote ?? "",
       showElectronicPayment: body.showElectronicPayment ?? true,
