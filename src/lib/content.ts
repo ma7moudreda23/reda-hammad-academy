@@ -70,6 +70,15 @@ export type HomeContent = {
     videoUrl: string;
     buttons: CtaButton[];
   };
+  registrationGuide: {
+    enabled: boolean;
+    title: string;
+    subtitle: string;
+    body: string;
+    mediaType: "none" | "image" | "video";
+    imageUrl: string;
+    videoUrl: string;
+  };
   testimonials: Testimonial[];
   cta: {
     title: string;
@@ -198,6 +207,15 @@ export const DEFAULT_HOME: HomeContent = {
     imageUrl: "",
     videoUrl: "",
     buttons: [],
+  },
+  registrationGuide: {
+    enabled: false,
+    title: "طريقة التسجيل في الدورة",
+    subtitle: "خطوات بسيطة تخليك تشترك في دقائق.",
+    body: "",
+    mediaType: "none",
+    imageUrl: "",
+    videoUrl: "",
   },
   testimonials: [
     {

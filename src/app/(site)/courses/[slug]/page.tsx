@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourseBySlug, parseCurriculum, parseStringList } from "@/lib/courses";
 import { getPaymentContent } from "@/lib/payment";
+import { getHomeContent } from "@/lib/content";
 import { filterBanks } from "@/lib/banks";
 import { PLATFORM_URL, SITE_URL, BRAND_NAME } from "@/lib/site";
 import { Reveal } from "@/components/motion";
@@ -10,6 +11,7 @@ import { AcademicIcon, ArrowIcon, CheckIcon } from "@/components/icons";
 import { CourseCurriculum } from "@/components/CourseCurriculum";
 import { PaymentView } from "@/components/PaymentView";
 import { CourseCountdown } from "@/components/CourseCountdown";
+import { RegistrationGuide } from "@/components/RegistrationGuide";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +51,9 @@ export default async function CourseDetailPage({
   const features = parseStringList(course.features);
 
   const payment = await getPaymentContent();
+  const guide = course.showRegistrationGuide
+    ? (await getHomeContent()).registrationGuide
+    : null;
   const courseBanks = course.showBankTransfer
     ? filterBanks(payment.banks, course.paymentBanks)
     : [];
@@ -215,6 +220,12 @@ export default async function CourseDetailPage({
 
         <CourseCurriculum sections={curriculum} />
       </section>
+
+      {guide && (
+        <div className="pb-16">
+          <RegistrationGuide data={guide} />
+        </div>
+      )}
     </div>
   );
 }

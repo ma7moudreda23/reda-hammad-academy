@@ -28,6 +28,7 @@ export default async function AdminCoursesPage() {
     category: c.category,
     startAt: c.startAt ?? "",
     registrationOpen: c.registrationOpen ?? false,
+    showRegistrationGuide: c.showRegistrationGuide ?? false,
     detailsImageUrl: c.detailsImageUrl ?? "",
     paymentNote: c.paymentNote ?? "",
     showElectronicPayment: c.showElectronicPayment,

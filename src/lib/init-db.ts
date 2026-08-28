@@ -101,6 +101,7 @@ const STATEMENTS = [
     \`category\` VARCHAR(191) NOT NULL DEFAULT '',
     \`startAt\` VARCHAR(191) NOT NULL DEFAULT '',
     \`registrationOpen\` TINYINT(1) NOT NULL DEFAULT 0,
+    \`showRegistrationGuide\` TINYINT(1) NOT NULL DEFAULT 0,
     \`detailsImageUrl\` TEXT NULL,
     \`paymentNote\` TEXT NULL,
     \`showElectronicPayment\` TINYINT(1) NOT NULL DEFAULT 1,
@@ -124,6 +125,7 @@ const STATEMENTS = [
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `priceNote` TEXT NULL",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `startAt` VARCHAR(191) NOT NULL DEFAULT ''",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `registrationOpen` TINYINT(1) NOT NULL DEFAULT 0",
+  "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `showRegistrationGuide` TINYINT(1) NOT NULL DEFAULT 0",
   "ALTER TABLE `Upload` ADD COLUMN IF NOT EXISTS `token` VARCHAR(64) NULL",
   "ALTER TABLE `Upload` ADD UNIQUE INDEX IF NOT EXISTS `Upload_token_key`(`token`)",
 ];

@@ -57,6 +57,7 @@ export async function PUT(
   if (body.category !== undefined) data.category = body.category;
   if (body.startAt !== undefined) data.startAt = body.startAt;
   if (body.registrationOpen !== undefined) data.registrationOpen = body.registrationOpen;
+  if (body.showRegistrationGuide !== undefined) data.showRegistrationGuide = body.showRegistrationGuide;
   if (body.detailsImageUrl !== undefined) data.detailsImageUrl = body.detailsImageUrl;
   if (body.paymentNote !== undefined) data.paymentNote = body.paymentNote;
   if (body.showElectronicPayment !== undefined) data.showElectronicPayment = body.showElectronicPayment;

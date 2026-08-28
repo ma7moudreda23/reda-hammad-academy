@@ -15,6 +15,7 @@ import {
 } from "@/components/icons";
 import { BrandLogo } from "@/components/Logo";
 import { PromoVideo } from "@/components/PromoVideo";
+import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { WhatsappIcon } from "@/components/social-icons";
 
 function toEmbed(url: string) {
@@ -448,6 +449,15 @@ export function HomeSections({
             ))}
           </div>
         </section>
+      )}
+
+      {/* REGISTRATION GUIDE */}
+      {content.registrationGuide?.enabled && (
+        <div id="register" className="scroll-mt-28 pt-20">
+          <Reveal>
+            <RegistrationGuide data={content.registrationGuide} />
+          </Reveal>
+        </div>
       )}
 
       {/* TESTIMONIALS */}

@@ -555,6 +555,57 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
           </p>
         </Card>
 
+        {/* Registration guide / طريقة التسجيل */}
+        <Card title="طريقة التسجيل في الدورة" desc="قسم يشرح خطوات التسجيل (نص + صورة أو فيديو). يظهر في الرئيسية، وتقدر تعرضه في أي دورة من إعداد الدورة.">
+          <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
+            <input type="checkbox" checked={c.registrationGuide.enabled}
+              onChange={(e) => update("registrationGuide", { ...c.registrationGuide, enabled: e.target.checked })}
+              className="h-5 w-5 cursor-pointer accent-brand-600" />
+            <span className="font-bold text-brand-900">إظهار القسم في الصفحة الرئيسية</span>
+          </label>
+
+          <Field label="العنوان" value={c.registrationGuide.title}
+            onChange={(v) => update("registrationGuide", { ...c.registrationGuide, title: v })} />
+          <Area label="وصف مختصر (اختياري)" rows={2} value={c.registrationGuide.subtitle}
+            onChange={(v) => update("registrationGuide", { ...c.registrationGuide, subtitle: v })} />
+          <Area label="النص / الخطوات (اختياري)" rows={5} value={c.registrationGuide.body}
+            onChange={(v) => update("registrationGuide", { ...c.registrationGuide, body: v })}
+            placeholder={"مثال:\n1- اعمل حساب على المنصة\n2- تواصل مع الدعم\n3- سدّد رسوم الدورة"} />
+
+          <div>
+            <span className="mb-1.5 block text-sm font-bold text-brand-900">نوع الوسائط</span>
+            <div className="flex flex-wrap gap-2">
+              {([
+                { key: "none", label: "بدون وسائط (نص فقط)" },
+                { key: "image", label: "صورة" },
+                { key: "video", label: "فيديو" },
+              ] as const).map((o) => (
+                <button key={o.key} type="button"
+                  onClick={() => update("registrationGuide", { ...c.registrationGuide, mediaType: o.key })}
+                  className={`rounded-xl border px-4 py-2 text-sm font-bold transition-colors ${
+                    c.registrationGuide.mediaType === o.key
+                      ? "border-brand-600 bg-brand-600 text-white"
+                      : "border-brand-200 bg-white text-brand-900/70 hover:bg-brand-50"
+                  }`}>
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {c.registrationGuide.mediaType === "image" && (
+            <MediaUpload label="صورة الشرح" value={c.registrationGuide.imageUrl}
+              onChange={(v) => update("registrationGuide", { ...c.registrationGuide, imageUrl: v })} />
+          )}
+          {c.registrationGuide.mediaType === "video" && (
+            <MediaUpload label="فيديو الشرح (ملف أو رابط يوتيوب)" accept="video/*" value={c.registrationGuide.videoUrl}
+              onChange={(v) => update("registrationGuide", { ...c.registrationGuide, videoUrl: v })} />
+          )}
+          <p className="text-xs text-brand-900/45">
+            لإظهاره في صفحة دورة معيّنة: افتح إعداد الدورة وفعّل «إظهار قسم طريقة التسجيل».
+          </p>
+        </Card>
+
         {/* CTA */}
         <Card title="قسم الدعوة للاشتراك (CTA)">
           <Field label="العنوان" value={c.cta.title} onChange={(v) => update("cta", { ...c.cta, title: v })} />

@@ -43,6 +43,7 @@ export type AdminCourse = {
   category: string;
   startAt: string;
   registrationOpen: boolean;
+  showRegistrationGuide: boolean;
   detailsImageUrl: string;
   paymentNote: string;
   showElectronicPayment: boolean;
@@ -87,6 +88,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     category: "",
     startAt: "",
     registrationOpen: false,
+    showRegistrationGuide: false,
     detailsImageUrl: "",
     paymentNote: "",
     showElectronicPayment: true,
@@ -537,6 +539,15 @@ export function CourseManager({
                     );
                   })()}
                 </div>
+                <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={draft.showRegistrationGuide}
+                    onChange={(e) => set("showRegistrationGuide", e.target.checked)}
+                    className="h-5 w-5 cursor-pointer accent-brand-600"
+                  />
+                  <span className="font-bold text-brand-900">إظهار قسم «طريقة التسجيل» في صفحة هذه الدورة</span>
+                </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
                 <Field label="الترتيب" value={String(draft.sortOrder)} onChange={(v) => set("sortOrder", Number(v) || 0)} />
 
