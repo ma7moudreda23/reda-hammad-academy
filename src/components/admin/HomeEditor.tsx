@@ -369,10 +369,21 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
               <div key={i} className="rounded-xl border border-brand-100 p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="font-bold text-brand-900">إعلان {i + 1}</span>
-                  <button type="button" onClick={() => update("announcements", { ...c.announcements, items: c.announcements.items.filter((_, x) => x !== i) })}
-                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-100 text-red-500 hover:bg-red-50">
-                    <CloseIcon className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button type="button" disabled={i === 0}
+                      onClick={() => { const items = [...c.announcements.items]; [items[i - 1], items[i]] = [items[i], items[i - 1]]; update("announcements", { ...c.announcements, items }); }}
+                      title="تحريك لأعلى"
+                      className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-100 text-brand-600 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-30">▲</button>
+                    <button type="button" disabled={i === c.announcements.items.length - 1}
+                      onClick={() => { const items = [...c.announcements.items]; [items[i + 1], items[i]] = [items[i], items[i + 1]]; update("announcements", { ...c.announcements, items }); }}
+                      title="تحريك لأسفل"
+                      className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-100 text-brand-600 hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-30">▼</button>
+                    <button type="button" onClick={() => update("announcements", { ...c.announcements, items: c.announcements.items.filter((_, x) => x !== i) })}
+                      title="حذف الإعلان"
+                      className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-xl border border-brand-100 text-red-500 hover:bg-red-50">
+                      <CloseIcon className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
                 <Field label="العنوان" value={item.title}
                   onChange={(v) => { const items = [...c.announcements.items]; items[i] = { ...item, title: v }; update("announcements", { ...c.announcements, items }); }} />
