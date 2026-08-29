@@ -60,6 +60,16 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
       </div>
 
       <div className="space-y-5">
+        {/* Tracking / Meta Pixel */}
+        <Card title="بيكسل ميتا (Meta Pixel) — للإعلانات" desc="الصق رقم Pixel ID من إعدادات Meta Events Manager. البيكسل هيشتغل على كل صفحات الموقع تلقائيًا لتتبّع الزيارات والإعلانات.">
+          <Field label="Meta Pixel ID" dir="ltr" value={c.metaPixelId ?? ""}
+            onChange={(v) => update("metaPixelId", v.trim())}
+            placeholder="مثال: 1234567890123456" />
+          <p className="text-xs text-brand-900/45">
+            رقم مكوّن من أرقام فقط. اتركه فاضي لإيقاف البيكسل. (بتلاقيه في Meta Events Manager ← Data Sources ← البيكسل بتاعك.)
+          </p>
+        </Card>
+
         {/* Brand + Hero */}
         <Card title="القسم الرئيسي (Hero)">
           <Field label="اسم الأكاديمية" value={c.brandName} onChange={(v) => update("brandName", v)} />

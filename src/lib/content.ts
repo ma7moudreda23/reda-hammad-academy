@@ -12,6 +12,7 @@ export type TrackGroup = { category: string; icon: string; items: string[] };
 
 export type HomeContent = {
   brandName: string;
+  metaPixelId: string;
   hero: {
     badge: string;
     title: string;
@@ -97,6 +98,7 @@ export const HOME_CONTENT_KEY = "home";
 
 export const DEFAULT_HOME: HomeContent = {
   brandName: "أكاديمية رضا حماد التعليمية",
+  metaPixelId: "",
   hero: {
     badge: "منصة تعليمية متخصصة",
     title: "تعلّم مع الأستاذ",
