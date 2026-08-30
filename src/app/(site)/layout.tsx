@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NewsTicker } from "@/components/NewsTicker";
 import { MetaPixel } from "@/components/MetaPixel";
+import MetaViewContentTracker from "@/components/MetaViewContentTracker";
 import { getHomeContent } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,12 @@ export default async function SiteLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      {metaPixelId?.trim() && <MetaPixel pixelId={metaPixelId} />}
+      {metaPixelId?.trim() && (
+        <>
+          <MetaPixel pixelId={metaPixelId} />
+          <MetaViewContentTracker />
+        </>
+      )}
       {tickerActive && (
         <div className="fixed inset-x-0 top-0 z-[60]">
           <NewsTicker items={ticker.items} />
