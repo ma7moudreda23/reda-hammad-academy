@@ -25,13 +25,35 @@ export default function RefundPage() {
             يتم تفعيل الاشتراك في الكورس فور إتمام عملية الدفع بنجاح ووصول تأكيد
             العملية.
           </li>
+          <li>
+            تُعالَج عملية الدفع باعتبارها{" "}
+            <span className="font-bold">عملية دولية</span> لصالح شركة{" "}
+            <span className="font-bold" dir="ltr">
+              Reda Hammad Academy LTD
+            </span>{" "}
+            المسجّلة رسميًا في المملكة المتحدة.
+          </li>
+          <li>
+            يُخصم منك <span className="font-bold">المبلغ المعروض فقط</span>، ولا
+            تفرض المنصة أي <span className="font-bold">رسوم إضافية</span> من أي
+            نوع.
+          </li>
         </ul>
+        <p className="mt-3 rounded-xl border border-brand-100 bg-brand-50/60 p-4 text-sm leading-7">
+          في حال ظهور أي فرق بسيط في المبلغ ناتج عن{" "}
+          <span className="font-bold">تحويل العملة</span> أو رسوم المعاملات
+          الدولية من جهة البنك أو شركة البطاقة، فإن هذا الفرق يخص{" "}
+          <span className="font-bold">البنك المُصدِر للبطاقة</span> وحده، ويُعاد
+          إليك من خلاله. المنصة{" "}
+          <span className="font-bold">لا تخصم أي مبلغ زائد</span> ولا تحتفظ به،
+          ولا علاقة لها بأي رسوم يفرضها البنك خارج قيمة الاشتراك المعروضة.
+        </p>
       </LegalSection>
 
       <LegalSection title="سياسة الاسترجاع">
         <ul className="list-disc space-y-1.5 pr-6">
           <li>
-            يمكن طلب استرداد المبلغ خلال <span className="font-bold">7 أيام</span>{" "}
+            يمكن طلب استرداد المبلغ خلال <span className="font-bold">3 أيام</span>{" "}
             من تاريخ الشراء، بشرط عدم استهلاك أكثر من 20% من محتوى الكورس.
           </li>
           <li>
@@ -56,6 +78,49 @@ export default function RefundPage() {
           لحل أي مشكلة تقنية أو استفسار يواجهك أثناء الاشتراك أو مشاهدة المحتوى.
           نلتزم بالرد على طلبات الدعم في أسرع وقت ممكن.
         </p>
+      </LegalSection>
+
+      <LegalSection title="بيانات الشركة والتوثيق القانوني">
+        <p>
+          تُدار المنصة والمدفوعات من خلال شركة{" "}
+          <span className="font-bold" dir="ltr">
+            Reda Hammad Academy LTD
+          </span>
+          ، وهي شركة تعليمية مؤسَّسة ومسجَّلة رسميًا في{" "}
+          <span className="font-bold">المملكة المتحدة (بريطانيا)</span> لدى الهيئة
+          الحكومية للسجل التجاري <span dir="ltr">Companies House</span>.
+        </p>
+        <ul className="list-disc space-y-1.5 pr-6">
+          <li>
+            اسم الشركة:{" "}
+            <span className="font-bold" dir="ltr">
+              REDA HAMMAD ACADEMY LTD
+            </span>
+          </li>
+          <li>
+            رقم التسجيل الرسمي:{" "}
+            <span className="font-bold" dir="ltr">
+              17419772
+            </span>
+          </li>
+          <li>النشاط: خدمات ومحتوى تعليمي.</li>
+          <li>
+            المقر المسجَّل:{" "}
+            <span dir="ltr">128 City Road, London, EC1V 2NX, United Kingdom</span>
+          </li>
+        </ul>
+        <p className="mt-2">
+          للتحقّق من بيانات الشركة، يمكنك الاستعلام مباشرةً من السجل الحكومي
+          الرسمي البريطاني:
+        </p>
+        <a
+          href="https://find-and-update.company-information.service.gov.uk/company/17419772"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 font-bold text-white shadow-md shadow-brand-600/30 transition-colors hover:bg-brand-700"
+        >
+          الاستعلام عن الشركة في السجل الرسمي
+        </a>
       </LegalSection>
 
       <LegalSection title="التواصل">

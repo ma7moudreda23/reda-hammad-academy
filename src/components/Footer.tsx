@@ -79,7 +79,21 @@ export async function Footer() {
               ))}
             </div>
           )}
-          <p>© {year} {BRAND_NAME}. جميع الحقوق محفوظة.</p>
+          <p className="leading-7">
+            © {year} {BRAND_NAME}. جميع الحقوق محفوظة.
+            <br />
+            مُشغَّلة بواسطة{" "}
+            <span dir="ltr">Reda Hammad Academy LTD</span> — شركة مسجّلة في
+            المملكة المتحدة برقم{" "}
+            <a
+              href="https://find-and-update.company-information.service.gov.uk/company/17419772"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-accent-300 underline decoration-accent-400/50 underline-offset-2 transition-colors hover:text-accent-200"
+            >
+              <span dir="ltr">17419772</span>
+            </a>
+          </p>
         </div>
       </div>
     </footer>
