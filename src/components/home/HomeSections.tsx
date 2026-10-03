@@ -18,26 +18,20 @@ import { PromoVideo } from "@/components/PromoVideo";
 import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { WhatsappIcon } from "@/components/social-icons";
 
-// Extract the YouTube video id from any common URL form.
-function youtubeId(url: string): string | null {
+function toEmbed(url: string) {
   try {
     const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1) || null;
-    if (u.hostname.includes("youtube.com")) {
-      if (u.searchParams.get("v")) return u.searchParams.get("v");
-      if (u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] || null;
-      if (u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || null;
+    if (u.hostname.includes("youtu.be")) {
+      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
     }
-    return null;
+    if (u.hostname.includes("youtube.com")) {
+      const id = u.searchParams.get("v");
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+    return url;
   } catch {
-    return null;
+    return url;
   }
-}
-
-// Canonical watch URL (opens the video on YouTube).
-function toWatch(url: string): string {
-  const id = youtubeId(url);
-  return id ? `https://www.youtube.com/watch?v=${id}` : url;
 }
 
 export function HomeSections({
