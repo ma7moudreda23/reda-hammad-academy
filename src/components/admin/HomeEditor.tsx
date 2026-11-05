@@ -17,8 +17,51 @@ const ICON_OPTIONS = [
   { value: "star", label: "نجمة" },
 ];
 
+// The editor's top menu, in the order the sections appear on the homepage.
+const TABS = [
+  { key: "hero", label: "القسم الرئيسي" },
+  { key: "stats", label: "الإحصائيات" },
+  { key: "promo", label: "فيديو المنصة" },
+  { key: "features", label: "المميزات" },
+  { key: "tracks", label: "تخصصات الأستاذ" },
+  { key: "about", label: "عن الأكاديمية" },
+  { key: "videos", label: "الفيديوهات" },
+  { key: "testimonials", label: "آراء الطلاب" },
+  { key: "results", label: "درجات الطلاب" },
+  { key: "announcements", label: "إعلانات المنصة" },
+  { key: "ticker", label: "الشريط الإخباري" },
+  { key: "popup", label: "الإعلان المنبثق" },
+  { key: "registration", label: "طريقة التسجيل" },
+  { key: "cta", label: "الدعوة للاشتراك" },
+  { key: "social", label: "التواصل الاجتماعي" },
+  { key: "contact", label: "واتساب الدعم" },
+  { key: "pixel", label: "بيكسل ميتا" },
+] as const;
+
+function moved<T>(list: T[], i: number, j: number): T[] {
+  const next = [...list];
+  [next[i], next[j]] = [next[j], next[i]];
+  return next;
+}
+
+function MoveButtons({ index, count, onMove }: { index: number; count: number; onMove: (to: number) => void }) {
+  return (
+    <div className="flex shrink-0 flex-col">
+      <button type="button" onClick={() => onMove(index - 1)} disabled={index === 0} title="تحريك لأعلى"
+        className="flex h-[18px] w-7 cursor-pointer items-center justify-center rounded-t-md border border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:cursor-default disabled:opacity-30">
+        ▲
+      </button>
+      <button type="button" onClick={() => onMove(index + 1)} disabled={index === count - 1} title="تحريك لأسفل"
+        className="flex h-[18px] w-7 cursor-pointer items-center justify-center rounded-b-md border border-t-0 border-brand-200 text-xs leading-none text-brand-600 hover:bg-brand-50 disabled:cursor-default disabled:opacity-30">
+        ▼
+      </button>
+    </div>
+  );
+}
+
 export function HomeEditor({ initial }: { initial: HomeContent }) {
   const [c, setC] = useState<HomeContent>(initial);
+  const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("hero");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
@@ -54,13 +97,31 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
         <div>
           <h1 className="text-2xl font-black text-brand-900">محتوى الصفحة الرئيسية</h1>
           <p className="mt-1 text-sm text-brand-900/55">
-            عدّل أي جزء واضغط حفظ. التغييرات تظهر فورًا على الموقع.
+            اختر القسم من القائمة وعدّله. زر الحفظ بيحفظ تعديلات كل الأقسام مرة واحدة، والتغييرات تظهر فورًا على الموقع.
           </p>
         </div>
       </div>
 
+      <div role="tablist" className="sticky top-16 z-20 mb-5 flex gap-1.5 overflow-x-auto rounded-xl border border-brand-100 bg-white/95 p-2 shadow-sm backdrop-blur [scrollbar-width:none] lg:top-4 lg:flex-wrap">
+        {TABS.map((t) => (
+          <button key={t.key} type="button" role="tab" aria-selected={tab === t.key}
+            onClick={(e) => {
+              setTab(t.key);
+              e.currentTarget.scrollIntoView({ inline: "center", block: "nearest" });
+            }}
+            className={`shrink-0 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
+              tab === t.key
+                ? "bg-brand-600 text-white"
+                : "text-brand-900/70 hover:bg-brand-50 hover:text-brand-800"
+            }`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-5">
         {/* Tracking / Meta Pixel */}
+        {tab === "pixel" && (
         <Card title="بيكسل ميتا (Meta Pixel) — للإعلانات" desc="الصق رقم Pixel ID من إعدادات Meta Events Manager. البيكسل هيشتغل على كل صفحات الموقع تلقائيًا لتتبّع الزيارات والإعلانات.">
           <Field label="Meta Pixel ID" dir="ltr" value={c.metaPixelId ?? ""}
             onChange={(v) => update("metaPixelId", v.trim())}
@@ -69,8 +130,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             رقم مكوّن من أرقام فقط. اتركه فاضي لإيقاف البيكسل. (بتلاقيه في Meta Events Manager ← Data Sources ← البيكسل بتاعك.)
           </p>
         </Card>
+        )}
 
         {/* Brand + Hero */}
+        {tab === "hero" && (
         <Card title="القسم الرئيسي (Hero)">
           <Field label="اسم الأكاديمية" value={c.brandName} onChange={(v) => update("brandName", v)} />
           <Field label="شارة علوية" value={c.hero.badge} onChange={(v) => update("hero", { ...c.hero, badge: v })} />
@@ -85,8 +148,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
           </div>
           <MediaUpload label="صورة القسم الرئيسي" value={c.hero.imageUrl} onChange={(v) => update("hero", { ...c.hero, imageUrl: v })} />
         </Card>
+        )}
 
         {/* Stats */}
+        {tab === "stats" && (
         <Card title="الإحصائيات" desc="الأرقام اللي بتظهر تحت القسم الرئيسي">
           <div className="grid gap-4 sm:grid-cols-2">
             {c.stats.map((s, i) => (
@@ -101,8 +166,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             ))}
           </div>
         </Card>
+        )}
 
         {/* Promo video */}
+        {tab === "promo" && (
         <Card title="فيديو المنصة (البرومو)" desc="فيديو تعريفي يظهر أعلى الصفحة الرئيسية. ارفع ملف فيديو أو الصق رابط يوتيوب.">
           <Field label="عنوان القسم" value={c.promo.title} onChange={(v) => update("promo", { ...c.promo, title: v })} />
           <Area label="وصف مختصر" rows={2} value={c.promo.subtitle} onChange={(v) => update("promo", { ...c.promo, subtitle: v })} />
@@ -126,8 +193,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             القسم بيظهر بس لما يكون فيه فيديو. لو سبته فاضي مابيظهرش.
           </p>
         </Card>
+        )}
 
         {/* Features */}
+        {tab === "features" && (
         <Card title="المميزات">
           <div className="space-y-4">
             {c.features.map((f, i) => (
@@ -160,15 +229,26 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             ))}
           </div>
         </Card>
+        )}
 
         {/* Training tracks */}
+        {tab === "tracks" && (
         <Card title="تخصصات الأستاذ (المسارات التدريبية)" desc="مقياس موهبة، الكمي، منهج موهبة، التحصيلي... إلخ">
           <Field label="عنوان القسم" value={c.trainingTracks.title} onChange={(v) => update("trainingTracks", { ...c.trainingTracks, title: v })} />
           <Area label="وصف القسم" rows={2} value={c.trainingTracks.subtitle} onChange={(v) => update("trainingTracks", { ...c.trainingTracks, subtitle: v })} />
 
+          <p className="text-xs text-brand-900/45">
+            غيّر الترتيب بالأسهم ▲▼ واضغط حفظ. التخصص الأول هو أول كارت من اليمين في الموقع، والعناصر بتظهر بنفس ترتيبها هنا.
+          </p>
           <div className="space-y-4">
             {c.trainingTracks.groups.map((g, gi) => (
               <div key={gi} className="rounded-xl border border-brand-100 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <MoveButtons index={gi} count={c.trainingTracks.groups.length} onMove={(to) => {
+                    update("trainingTracks", { ...c.trainingTracks, groups: moved(c.trainingTracks.groups, gi, to) });
+                  }} />
+                  <span className="text-sm font-bold text-brand-900/55">التخصص {gi + 1}</span>
+                </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="اسم التخصص" value={g.category} onChange={(v) => {
                     const groups = [...c.trainingTracks.groups]; groups[gi] = { ...g, category: v };
@@ -204,6 +284,11 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
                   <div className="space-y-2">
                     {g.items.map((item, ii) => (
                       <div key={ii} className="flex items-center gap-2">
+                        <MoveButtons index={ii} count={g.items.length} onMove={(to) => {
+                          const groups = [...c.trainingTracks.groups];
+                          groups[gi] = { ...g, items: moved(g.items, ii, to) };
+                          update("trainingTracks", { ...c.trainingTracks, groups });
+                        }} />
                         <input value={item} onChange={(e) => {
                           const groups = [...c.trainingTracks.groups];
                           const items = [...g.items]; items[ii] = e.target.value;
@@ -236,8 +321,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة تخصص
           </button>
         </Card>
+        )}
 
         {/* About */}
+        {tab === "about" && (
         <Card title="قسم عن الأكاديمية">
           <Field label="العنوان" value={c.about.title} onChange={(v) => update("about", { ...c.about, title: v })} />
           <Area label="النبذة" rows={5} value={c.about.paragraph} onChange={(v) => update("about", { ...c.about, paragraph: v })} />
@@ -265,8 +352,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             </div>
           </div>
         </Card>
+        )}
 
         {/* Videos */}
+        {tab === "videos" && (
         <Card title="الفيديوهات" desc="روابط يوتيوب — تظهر كقسم في الصفحة الرئيسية">
           <div className="space-y-3">
             {c.videos.map((v, i) => (
@@ -293,8 +382,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة فيديو
           </button>
         </Card>
+        )}
 
         {/* Testimonials */}
+        {tab === "testimonials" && (
         <Card title="آراء الطلاب">
           <div className="space-y-4">
             {c.testimonials.map((t, i) => (
@@ -326,8 +417,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة رأي
           </button>
         </Card>
+        )}
 
         {/* Student results */}
+        {tab === "results" && (
         <Card title="درجات طلابنا (نتائج الطلاب)" desc="ارفع صور أو فيديوهات لنتائج الطلاب. يظهر كمعرض في الصفحة الرئيسية.">
           <Field label="عنوان القسم" value={c.studentResults.title} onChange={(v) => update("studentResults", { ...c.studentResults, title: v })} />
           <Area label="وصف مختصر" rows={2} value={c.studentResults.subtitle} onChange={(v) => update("studentResults", { ...c.studentResults, subtitle: v })} />
@@ -368,8 +461,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة نتيجة
           </button>
         </Card>
+        )}
 
         {/* Announcements */}
+        {tab === "announcements" && (
         <Card title="إعلانات المنصة" desc="أعلن عن دورة جديدة أو خبر — عنوان + تفاصيل + صورة. يظهر في الصفحة الرئيسية.">
           <Field label="عنوان القسم" value={c.announcements.title} onChange={(v) => update("announcements", { ...c.announcements, title: v })} />
           <Area label="وصف مختصر" rows={2} value={c.announcements.subtitle} onChange={(v) => update("announcements", { ...c.announcements, subtitle: v })} />
@@ -445,8 +540,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة إعلان
           </button>
         </Card>
+        )}
 
         {/* Ticker / النشرات */}
+        {tab === "ticker" && (
         <Card title="النشرات (الشريط الإخباري)" desc="شريط أخبار متحرك يظهر أعلى الصفحة الرئيسية ويلفّ باستمرار. أضف عدة أخبار قصيرة.">
           <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
             <input type="checkbox" checked={c.ticker.enabled}
@@ -489,8 +586,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة خبر
           </button>
         </Card>
+        )}
 
         {/* Popup / الإعلان المنبثق */}
+        {tab === "popup" && (
         <Card title="الإعلان المنبثق (Popup)" desc="نافذة تظهر للزائر أول ما يدخل الصفحة الرئيسية، ويقدر يقفلها. تقدر تحطّ صورة أو فيديو أو نص أو زر.">
           <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
             <input type="checkbox" checked={c.popup.enabled}
@@ -564,8 +663,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             الإعلان بيظهر مرة واحدة لكل زائر لحد ما يقفله. لو غيّرت محتواه، هيظهر تاني للجميع تلقائيًا.
           </p>
         </Card>
+        )}
 
         {/* Registration guide / طريقة التسجيل */}
+        {tab === "registration" && (
         <Card title="طريقة التسجيل في الدورة" desc="قسم يشرح خطوات التسجيل (نص + صورة أو فيديو). يظهر في الرئيسية، وتقدر تعرضه في أي دورة من إعداد الدورة.">
           <label className="flex items-center gap-3 rounded-xl border border-brand-200 px-4 py-3">
             <input type="checkbox" checked={c.registrationGuide.enabled}
@@ -615,15 +716,19 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             لإظهاره في صفحة دورة معيّنة: افتح إعداد الدورة وفعّل «إظهار قسم طريقة التسجيل».
           </p>
         </Card>
+        )}
 
         {/* CTA */}
+        {tab === "cta" && (
         <Card title="قسم الدعوة للاشتراك (CTA)">
           <Field label="العنوان" value={c.cta.title} onChange={(v) => update("cta", { ...c.cta, title: v })} />
           <Area label="الوصف" rows={2} value={c.cta.subtitle} onChange={(v) => update("cta", { ...c.cta, subtitle: v })} />
           <Field label="نص الزر" value={c.cta.buttonText} onChange={(v) => update("cta", { ...c.cta, buttonText: v })} />
         </Card>
+        )}
 
         {/* Social media */}
+        {tab === "social" && (
         <Card title="روابط التواصل الاجتماعي" desc="تظهر كأيقونات أسفل الموقع (الفوتر) وتفتح في تبويب جديد.">
           <div className="space-y-3">
             {(c.social ?? []).map((s, i) => (
@@ -659,8 +764,10 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             + إضافة رابط
           </button>
         </Card>
+        )}
 
         {/* Contact (WhatsApp) */}
+        {tab === "contact" && (
         <Card title="تواصل معنا (واتساب الدعم الفني)" desc="يظهر كقسم في الصفحة الرئيسية بزر واتساب يفتح المحادثة مباشرة.">
           <Field label="عنوان القسم" value={c.contact?.title ?? ""} onChange={(v) => update("contact", { ...c.contact, title: v })} />
           <Area label="وصف مختصر" rows={2} value={c.contact?.subtitle ?? ""} onChange={(v) => update("contact", { ...c.contact, subtitle: v })} />
@@ -669,6 +776,7 @@ export function HomeEditor({ initial }: { initial: HomeContent }) {
             اكتب الرقم بالصيغة الدولية مع كود الدولة (مثال: +966540858626). الضغط على الزر بيفتح محادثة واتساب على الرقم ده.
           </p>
         </Card>
+        )}
       </div>
 
       {/* Sticky save bar */}
