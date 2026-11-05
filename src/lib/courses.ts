@@ -29,6 +29,7 @@ function toView(c: {
   price: string;
   oldPrice: string;
   priceNote: string | null;
+  promoCode: string;
   currency: string;
   badge: string;
   category: string;
@@ -43,6 +44,7 @@ function toView(c: {
     price: c.price,
     oldPrice: c.oldPrice,
     priceNote: c.priceNote ?? "",
+    hasPromo: !!c.promoCode.trim(),
     currency: c.currency,
     badge: c.badge,
     category: c.category,

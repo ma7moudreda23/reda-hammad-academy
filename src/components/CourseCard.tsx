@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowIcon, AcademicIcon } from "@/components/icons";
+import { PromoCounter, usePromo } from "@/components/PromoCounter";
 
 export type CourseView = {
   id: number;
@@ -13,6 +14,7 @@ export type CourseView = {
   price: string;
   oldPrice: string;
   priceNote: string;
+  hasPromo: boolean;
   currency: string;
   badge: string;
   category: string;
@@ -20,6 +22,10 @@ export type CourseView = {
 };
 
 export function CourseCard({ course, index = 0 }: { course: CourseView; index?: number }) {
+  const promo = usePromo(course.slug, course.hasPromo);
+  // Once the discount runs out, the old price is what a student actually pays.
+  const fullPrice = promo?.ended && course.oldPrice;
+  const price = fullPrice || course.price;
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -58,24 +64,25 @@ export function CourseCard({ course, index = 0 }: { course: CourseView; index?: 
 
         <div className="mt-5 flex items-end justify-between gap-3">
           <div className="flex flex-col gap-0.5">
-            {course.price ? (
+            {price ? (
               <span className="flex items-baseline gap-2">
-                {course.oldPrice && (
+                {course.oldPrice && !fullPrice && (
                   <span className="text-lg font-black text-brand-900/45 line-through decoration-red-500 decoration-2">
                     {course.oldPrice}
                   </span>
                 )}
                 <span className="text-lg font-extrabold text-brand-700">
-                  {course.price}
+                  {price}
                   {course.currency ? ` ${course.currency}` : ""}
                 </span>
               </span>
             ) : (
               <span className="text-sm font-semibold text-brand-500">سجّل الآن</span>
             )}
-            {course.priceNote && (
+            {course.priceNote && !promo?.ended && (
               <span className="text-xs font-bold text-accent-600">{course.priceNote}</span>
             )}
+            {promo && <PromoCounter status={promo} compact />}
           </div>
           <a
             href={course.platformUrl}

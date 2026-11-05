@@ -24,6 +24,7 @@ export default async function AdminCoursesPage() {
     price: c.price,
     oldPrice: c.oldPrice,
     priceNote: c.priceNote ?? "",
+    promoCode: c.promoCode ?? "",
     currency: c.currency,
     badge: c.badge,
     category: c.category,

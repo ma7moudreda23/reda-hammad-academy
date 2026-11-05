@@ -14,6 +14,7 @@ import { CourseCountdown } from "@/components/CourseCountdown";
 import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { CourseSchedule } from "@/components/CourseSchedule";
 import { CourseVideos } from "@/components/CourseVideos";
+import { CoursePagePrice } from "@/components/CoursePagePrice";
 
 export const dynamic = "force-dynamic";
 
@@ -159,22 +160,14 @@ export default async function CourseDetailPage({
               {course.description}
             </p>
 
-            {course.price && (
-              <p className="mt-6 flex items-baseline gap-3">
-                {course.oldPrice && (
-                  <span className="text-3xl font-black text-brand-900/45 line-through decoration-red-500 decoration-[3px]">
-                    {course.oldPrice}
-                  </span>
-                )}
-                <span className="text-3xl font-black text-brand-700">
-                  {course.price}
-                  {course.currency ? ` ${course.currency}` : ""}
-                </span>
-              </p>
-            )}
-            {course.priceNote && (
-              <p className="mt-2 text-sm font-bold text-accent-600">{course.priceNote}</p>
-            )}
+            <CoursePagePrice
+              slug={course.slug}
+              hasPromo={!!course.promoCode.trim()}
+              price={course.price}
+              oldPrice={course.oldPrice}
+              priceNote={course.priceNote ?? ""}
+              currency={course.currency}
+            />
 
             <a
               href={link}

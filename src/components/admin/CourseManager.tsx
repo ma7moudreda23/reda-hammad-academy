@@ -41,6 +41,7 @@ export type AdminCourse = {
   price: string;
   oldPrice: string;
   priceNote: string;
+  promoCode: string;
   currency: string;
   badge: string;
   category: string;
@@ -136,6 +137,7 @@ function emptyDraft(platformUrl: string, sortOrder: number): Draft {
     price: "",
     oldPrice: "",
     priceNote: "",
+    promoCode: "",
     currency: "ريال سعودي",
     badge: "",
     category: "",
@@ -334,6 +336,7 @@ export function CourseManager({
       id: undefined,
       slug: "",
       title: `${c.title} (نسخة)`,
+      promoCode: "",
       isPublished: false,
     });
   }
@@ -663,6 +666,12 @@ export function CourseManager({
                   </label>
                 </div>
                 <Field label="تعليق تحت السعر (اختياري)" value={draft.priceNote} onChange={(v) => set("priceNote", v)} placeholder="مثال: لأول 100 مشترك" />
+                <label className="block">
+                  <Field label="كود الخصم من Stripe (اختياري)" dir="ltr" value={draft.promoCode} onChange={(v) => set("promoCode", v)} placeholder="مثال: KAUST-T" />
+                  <span className="mt-1 block text-xs text-brand-900/45">
+                    اكتب الكود زي ما هو في Stripe، ولازم يكون محدد له عدد مرات استخدام. الموقع هيعرض الكود وعدد الباقي، ولما يخلص هيظهر السعر القديم كسعر حالي. اتركه فاضي لو مفيش عداد.
+                  </span>
+                </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
             </FormSection>
 

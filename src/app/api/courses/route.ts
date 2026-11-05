@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       price: body.price ?? "",
       oldPrice: body.oldPrice ?? "",
       priceNote: body.priceNote ?? "",
+      promoCode: typeof body.promoCode === "string" ? body.promoCode.trim() : "",
       currency: body.currency ?? "ريال سعودي",
       badge: body.badge ?? "",
       category: body.category ?? "",

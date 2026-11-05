@@ -57,6 +57,7 @@ export async function PUT(
   if (body.price !== undefined) data.price = body.price;
   if (body.oldPrice !== undefined) data.oldPrice = body.oldPrice;
   if (body.priceNote !== undefined) data.priceNote = body.priceNote;
+  if (typeof body.promoCode === "string") data.promoCode = body.promoCode.trim();
   if (body.currency !== undefined) data.currency = body.currency;
   if (body.badge !== undefined) data.badge = body.badge;
   if (body.category !== undefined) data.category = body.category;
