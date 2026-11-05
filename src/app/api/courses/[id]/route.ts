@@ -48,6 +48,11 @@ export async function PUT(
       typeof body.features === "string"
         ? body.features
         : JSON.stringify(body.features);
+  if (body.videos !== undefined)
+    data.videos =
+      typeof body.videos === "string"
+        ? body.videos
+        : JSON.stringify(body.videos);
   if (body.imageUrl !== undefined) data.imageUrl = body.imageUrl;
   if (body.price !== undefined) data.price = body.price;
   if (body.oldPrice !== undefined) data.oldPrice = body.oldPrice;

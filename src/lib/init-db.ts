@@ -91,6 +91,7 @@ const STATEMENTS = [
     \`longDescription\` TEXT NOT NULL,
     \`curriculum\` TEXT NOT NULL,
     \`features\` TEXT NOT NULL,
+    \`videos\` TEXT NULL,
     \`imageUrl\` TEXT NOT NULL,
     \`price\` VARCHAR(191) NOT NULL DEFAULT '',
     \`oldPrice\` VARCHAR(191) NOT NULL DEFAULT '',
@@ -136,6 +137,7 @@ const STATEMENTS = [
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `scheduleTitle` VARCHAR(191) NOT NULL DEFAULT ''",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `scheduleUrl` TEXT NULL",
   "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `schedulePosition` VARCHAR(191) NOT NULL DEFAULT 'afterPayment'",
+  "ALTER TABLE `Course` ADD COLUMN IF NOT EXISTS `videos` TEXT NULL",
   "ALTER TABLE `Upload` ADD COLUMN IF NOT EXISTS `token` VARCHAR(64) NULL",
   "ALTER TABLE `Upload` ADD UNIQUE INDEX IF NOT EXISTS `Upload_token_key`(`token`)",
 ];

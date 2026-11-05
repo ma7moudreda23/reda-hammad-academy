@@ -42,6 +42,7 @@ model Course {
   longDescription String   @default("") @db.Text
   curriculum      String   @default("[]") @db.Text
   features        String   @default("[]") @db.Text
+  videos          String?  @db.Text
   imageUrl        String   @default("") @db.Text
   price           String   @default("")
   oldPrice        String   @default("")

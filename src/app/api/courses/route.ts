@@ -49,6 +49,10 @@ export async function POST(request: Request) {
         typeof body.features === "string"
           ? body.features
           : JSON.stringify(body.features ?? []),
+      videos:
+        typeof body.videos === "string"
+          ? body.videos
+          : JSON.stringify(body.videos ?? []),
       imageUrl: body.imageUrl ?? "",
       price: body.price ?? "",
       oldPrice: body.oldPrice ?? "",

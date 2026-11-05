@@ -11,11 +11,13 @@ const coursesCacheOpts = {
 };
 
 export {
+  parseCourseVideos,
   parseCurriculum,
   parseStringList,
   type CourseItem,
   type CourseItemType,
   type CourseSection,
+  type CourseVideo,
 } from "@/lib/curriculum";
 
 function toView(c: {

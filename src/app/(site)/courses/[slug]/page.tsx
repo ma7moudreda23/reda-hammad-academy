@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourseBySlug, parseCurriculum, parseStringList } from "@/lib/courses";
+import { getCourseBySlug, parseCourseVideos, parseCurriculum, parseStringList } from "@/lib/courses";
 import { getPaymentContent } from "@/lib/payment";
 import { getHomeContent } from "@/lib/content";
 import { filterBanks } from "@/lib/banks";
@@ -13,6 +13,7 @@ import { PaymentView } from "@/components/PaymentView";
 import { CourseCountdown } from "@/components/CourseCountdown";
 import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { CourseSchedule } from "@/components/CourseSchedule";
+import { CourseVideos } from "@/components/CourseVideos";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,7 @@ export default async function CourseDetailPage({
   const link = course.platformUrl || PLATFORM_URL;
   const curriculum = parseCurriculum(course.curriculum);
   const features = parseStringList(course.features);
+  const videos = parseCourseVideos(course.videos).filter((v) => v.url);
 
   const payment = await getPaymentContent();
   const guide = course.showRegistrationGuide
@@ -198,6 +200,12 @@ export default async function CourseDetailPage({
             )}
           </Reveal>
         </div>
+
+        {videos.length > 0 && (
+          <Reveal className="mt-14">
+            <CourseVideos videos={videos} />
+          </Reveal>
+        )}
 
         {guideAt("top")}
         {scheduleAt("top")}

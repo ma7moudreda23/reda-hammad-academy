@@ -19,6 +19,7 @@ export default async function AdminCoursesPage() {
     longDescription: c.longDescription,
     curriculum: c.curriculum,
     features: c.features,
+    videos: c.videos ?? "[]",
     imageUrl: c.imageUrl,
     price: c.price,
     oldPrice: c.oldPrice,

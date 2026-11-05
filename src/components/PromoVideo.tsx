@@ -8,7 +8,9 @@ function toEmbed(url: string) {
     if (u.hostname.includes("youtu.be"))
       return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
     if (u.hostname.includes("youtube.com")) {
-      const id = u.searchParams.get("v");
+      const id =
+        u.searchParams.get("v") ??
+        u.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]+)/)?.[1];
       if (id) return `https://www.youtube.com/embed/${id}`;
     }
     return url;
