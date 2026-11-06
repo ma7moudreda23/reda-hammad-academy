@@ -15,7 +15,7 @@ export type PromoProblem =
   | "no-limit"
   | "unreachable";
 
-export type PromoCheck = { status: PromoStatus } | { problem: PromoProblem };
+export type PromoCheck = { status: PromoStatus } | { problem: PromoProblem; detail?: string };
 
 type Coupon = { id?: string; max_redemptions?: number | null; times_redeemed?: number };
 type PromotionCode = {
@@ -28,11 +28,15 @@ type PromotionCode = {
   promotion?: { coupon?: Coupon | string | null } | null;
 };
 
-function problemFromResponse(res: Response): PromoCheck {
-  console.error("promo: Stripe responded", res.status);
-  if (res.status === 401) return { problem: "bad-key" };
-  if (res.status === 403) return { problem: "no-permission" };
-  return { problem: "unreachable" };
+// Stripe's own wording names the missing permission. Any key in it is masked.
+async function problemFromResponse(res: Response): Promise<PromoCheck> {
+  const body = await res.json().catch(() => null);
+  const message: string = body?.error?.message ?? "";
+  const detail = message.replace(/\b(rk|sk|pk)_(test|live)_[\w*]+/g, "$1_$2_***") || undefined;
+  console.error("promo: Stripe responded", res.status, detail);
+  if (res.status === 401) return { problem: "bad-key", detail };
+  if (res.status === 403) return { problem: "no-permission", detail };
+  return { problem: "unreachable", detail };
 }
 
 // Stripe is the source of truth for how many times a code was redeemed, so the

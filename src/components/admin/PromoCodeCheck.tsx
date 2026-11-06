@@ -41,7 +41,16 @@ export function PromoCodeCheck({ code }: { code: string }) {
 
   const { check } = result;
   if ("problem" in check) {
-    return <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-600">{PROBLEMS[check.problem]}</p>;
+    return (
+      <div className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-red-600">
+        <p>{PROBLEMS[check.problem]}</p>
+        {check.detail && (
+          <p dir="ltr" className="mt-1 break-words text-left font-medium text-red-600/80">
+            Stripe: {check.detail}
+          </p>
+        )}
+      </div>
+    );
   }
   return (
     <p className={`mt-2 rounded-lg px-3 py-2 text-xs font-bold ${check.status.ended ? "bg-brand-50 text-brand-900/60" : "bg-emerald-50 text-emerald-700"}`}>
