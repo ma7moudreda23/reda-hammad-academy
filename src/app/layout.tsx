@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import { Cairo } from "next/font/google";
+import localFont from "next/font/local";
 import { SITE_URL, PLATFORM_URL, BRAND_NAME } from "@/lib/site";
 import "./globals.css";
 
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
+// Self-hosted so a build never depends on reaching Google Fonts. Latin comes
+// first in --font-sans and has no fallback face, so Arabic letters reach Cairo
+// Arabic instead of a system font.
+const cairoLatin = localFont({
+  src: "../fonts/cairo-latin-wght-normal.woff2",
+  variable: "--font-cairo-latin",
+  weight: "200 1000",
+  display: "swap",
+  adjustFontFallback: false,
+});
+const cairo = localFont({
+  src: "../fonts/cairo-arabic-wght-normal.woff2",
   variable: "--font-cairo",
-  weight: ["400", "600", "700", "800", "900"],
+  weight: "200 1000",
   display: "swap",
 });
 
@@ -48,7 +58,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${cairo.variable} h-full scroll-smooth`}
+      className={`${cairoLatin.variable} ${cairo.variable} h-full scroll-smooth`}
       suppressHydrationWarning
     >
       <body

@@ -22,7 +22,7 @@
   --color-accent-500: #cbae67;
   --color-accent-600: #b5934a;
 
-  --font-sans: var(--font-cairo), system-ui, sans-serif;
+  --font-sans: var(--font-cairo-latin), var(--font-cairo), system-ui, sans-serif;
 
   --radius-card: 1.25rem;
 }
