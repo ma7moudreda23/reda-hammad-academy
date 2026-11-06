@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Field, Area } from "@/components/admin/fields";
 import { MediaUpload } from "@/components/admin/MediaUpload";
+import { PromoCodeCheck } from "@/components/admin/PromoCodeCheck";
 import {
   AcademicIcon,
   CloseIcon,
@@ -669,8 +670,9 @@ export function CourseManager({
                 <label className="block">
                   <Field label="كود الخصم من Stripe (اختياري)" dir="ltr" value={draft.promoCode} onChange={(v) => set("promoCode", v)} placeholder="مثال: KAUST-T" />
                   <span className="mt-1 block text-xs text-brand-900/45">
-                    اكتب الكود زي ما هو في Stripe، ولازم يكون محدد له عدد مرات استخدام. الموقع هيعرض الكود وعدد الباقي، ولما يخلص هيظهر السعر القديم كسعر حالي. اتركه فاضي لو مفيش عداد.
+                    اكتب الكود زي ما هو في Stripe، ولازم يكون محدد له أو لكوبونه عدد مرات استخدام. الموقع هيعرض الكود وعدد الباقي، ولما يخلص هيظهر السعر القديم كسعر حالي. اتركه فاضي لو مفيش عداد.
                   </span>
+                  <PromoCodeCheck code={draft.promoCode} />
                 </label>
                 <Field label="رابط المنصة (عند الضغط على اشترك)" dir="ltr" value={draft.platformUrl} onChange={(v) => set("platformUrl", v)} />
             </FormSection>
