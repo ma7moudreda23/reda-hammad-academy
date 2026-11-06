@@ -18,7 +18,14 @@ const nextConfig: NextConfig = {
     preloadEntriesOnStart: false,
   },
   async headers() {
+    const publicImage = [
+      { key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" },
+    ];
     return [
+      { source: "/reda.jpg", headers: publicImage },
+      { source: "/logo.png", headers: publicImage },
+      { source: "/pay/:path*", headers: publicImage },
+      { source: "/banks/:path*", headers: publicImage },
       {
         source: "/:path*",
         headers: [

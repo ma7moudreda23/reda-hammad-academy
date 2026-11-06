@@ -28,11 +28,16 @@ export function MetaPixel({ pixelId }: { pixelId: string }) {
         n.loaded = !0;
         n.version = "2.0";
         n.queue = [];
-        t = b.createElement(e);
-        t.async = !0;
-        t.src = v;
-        s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s);
+        // Events wait in the queue above, so the script needn't compete with first paint.
+        const add = () => {
+          t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        };
+        if (b.readyState === "complete") f.setTimeout(add, 2500);
+        else f.addEventListener("load", () => f.setTimeout(add, 2500), { once: true });
       })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
       /* eslint-enable */
       w.fbq!("init", id);

@@ -49,6 +49,8 @@ export function BrandLogo({
     <img
       src="/logo.png?v=3"
       alt="أكاديمية رضا حماد التعليمية"
+      width={320}
+      height={326}
       className={className}
       onError={() => setError(true)}
     />

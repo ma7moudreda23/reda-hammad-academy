@@ -131,6 +131,8 @@ export default async function CourseDetailPage({
                 <img
                   src={course.imageUrl}
                   alt={course.title}
+                  width={1280}
+                  height={720}
                   fetchPriority="high"
                   decoding="async"
                   className="h-full w-full object-cover"

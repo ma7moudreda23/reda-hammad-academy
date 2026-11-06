@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import type { HomeContent } from "@/lib/content";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion";
 import { CourseCard, type CourseView } from "@/components/CourseCard";
@@ -14,25 +13,9 @@ import {
   AcademicIcon,
 } from "@/components/icons";
 import { BrandLogo } from "@/components/Logo";
-import { PromoVideo } from "@/components/PromoVideo";
+import { PromoVideo, youTubeId } from "@/components/PromoVideo";
 import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { WhatsappIcon } from "@/components/social-icons";
-
-function toEmbed(url: string) {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) {
-      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
-    }
-    if (u.hostname.includes("youtube.com")) {
-      const id = u.searchParams.get("v");
-      if (id) return `https://www.youtube.com/embed/${id}`;
-    }
-    return url;
-  } catch {
-    return url;
-  }
-}
 
 export function HomeSections({
   content,
@@ -50,21 +33,16 @@ export function HomeSections({
 
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-2">
           <div>
-            <motion.span
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-bold text-brand-700"
+            <span
+              className="hero-in inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-bold text-brand-700"
             >
               <StarIcon className="h-4 w-4 text-accent-500" />
               {content.hero.badge}
-            </motion.span>
+            </span>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="mt-6 text-4xl font-black leading-tight text-brand-900 sm:text-5xl lg:text-6xl"
+            <h1
+              style={{ animationDelay: "0.05s" }}
+              className="hero-in mt-6 text-4xl font-black leading-tight text-brand-900 sm:text-5xl lg:text-6xl"
             >
               {content.hero.title}{" "}
               <span className="relative whitespace-nowrap text-brand-600">
@@ -83,22 +61,18 @@ export function HomeSections({
                   />
                 </svg>
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-6 max-w-xl text-lg leading-8 text-brand-900/70"
+            <p
+              style={{ animationDelay: "0.12s" }}
+              className="hero-in mt-6 max-w-xl text-lg leading-8 text-brand-900/70"
             >
               {content.hero.subtitle}
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-8 flex flex-wrap gap-3"
+            <div
+              style={{ animationDelay: "0.18s" }}
+              className="hero-in mt-8 flex flex-wrap gap-3"
             >
               <Link
                 href="/login"
@@ -113,13 +87,10 @@ export function HomeSections({
               >
                 {content.hero.secondaryCtaText}
               </Link>
-            </motion.div>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          <div
             className="relative"
           >
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem] border border-brand-100 bg-gradient-to-br from-white to-brand-50 shadow-2xl shadow-brand-900/10">
@@ -128,6 +99,8 @@ export function HomeSections({
                 <img
                   src={content.hero.imageUrl}
                   alt={content.brandName}
+                  width={900}
+                  height={1125}
                   fetchPriority="high"
                   decoding="async"
                   className="h-full w-full object-cover object-top"
@@ -141,11 +114,9 @@ export function HomeSections({
                 </div>
               )}
             </div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="absolute bottom-6 left-6 flex items-center gap-3 rounded-2xl border border-brand-100 bg-white/90 px-4 py-3 shadow-xl backdrop-blur"
+            <div
+              style={{ animationDelay: "0.5s" }}
+              className="hero-in absolute bottom-6 left-6 flex items-center gap-3 rounded-2xl border border-brand-100 bg-white/90 px-4 py-3 shadow-xl backdrop-blur"
             >
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white">
                 <CheckIcon className="h-5 w-5" />
@@ -154,8 +125,8 @@ export function HomeSections({
                 <p className="font-extrabold text-brand-900">تعليم موثوق</p>
                 <p className="text-brand-900/60">جودة ومتابعة</p>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -414,13 +385,18 @@ export function HomeSections({
                 className="overflow-hidden rounded-card border border-brand-100 bg-white shadow-sm"
               >
                 <div className="aspect-video bg-black">
-                  <iframe
-                    src={toEmbed(v.url)}
-                    title={v.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="h-full w-full"
-                  />
+                  {youTubeId(v.url) ? (
+                    <PromoVideo url={v.url} autoplay={false} title={v.title} />
+                  ) : (
+                    <iframe
+                      src={v.url}
+                      title={v.title}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="h-full w-full"
+                    />
+                  )}
                 </div>
                 {v.title && (
                   <p className="p-4 font-bold text-brand-900">{v.title}</p>
