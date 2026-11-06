@@ -15,6 +15,8 @@ import { RegistrationGuide } from "@/components/RegistrationGuide";
 import { CourseSchedule } from "@/components/CourseSchedule";
 import { CourseVideos } from "@/components/CourseVideos";
 import { CoursePagePrice } from "@/components/CoursePagePrice";
+import { CourseBooklet } from "@/components/CourseBooklet";
+import { getBooklet } from "@/lib/booklets";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +55,7 @@ export default async function CourseDetailPage({
   const curriculum = parseCurriculum(course.curriculum);
   const features = parseStringList(course.features);
   const videos = parseCourseVideos(course.videos).filter((v) => v.url);
+  const booklet = getBooklet(course.slug);
 
   const payment = await getPaymentContent();
   const guide = course.showRegistrationGuide
@@ -248,6 +251,8 @@ export default async function CourseDetailPage({
 
         {guideAt("afterDetails")}
         {scheduleAt("afterDetails")}
+
+        {booklet && <CourseBooklet booklet={booklet} />}
 
         <CourseCurriculum sections={curriculum} />
 

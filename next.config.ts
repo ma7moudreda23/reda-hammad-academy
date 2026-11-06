@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
       { source: "/logo.png", headers: publicImage },
       { source: "/pay/:path*", headers: publicImage },
       { source: "/banks/:path*", headers: publicImage },
+      { source: "/booklets/:path*", headers: publicImage },
+      { source: "/vendor/:path*", headers: publicImage },
       {
         source: "/:path*",
         headers: [
