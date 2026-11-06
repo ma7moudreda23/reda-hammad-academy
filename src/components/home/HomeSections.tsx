@@ -200,7 +200,7 @@ export function HomeSections({
                   {a.imageUrl && (
                     <div className="aspect-video bg-brand-50">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.imageUrl} alt={a.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                      <img src={a.imageUrl} alt={a.title} width={1280} height={720} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                     </div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
@@ -287,6 +287,8 @@ export function HomeSections({
                 <img
                   src={content.about.imageUrl}
                   alt={content.about.title}
+                  width={1200}
+                  height={900}
                   loading="lazy"
                   decoding="async"
                   className="h-full w-full object-cover"

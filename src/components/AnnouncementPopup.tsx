@@ -33,10 +33,21 @@ export function AnnouncementPopup({ popup }: { popup: Popup }) {
       /* storage blocked — just show it */
     }
     if (dismissed === sig) return;
-    // Small delay so the page paints first, then the popup animates in.
-    const t = setTimeout(() => setOpen(true), 600);
-    return () => clearTimeout(t);
-  }, [popup.enabled, sig]);
+    // Opens on the first scroll (or after 10s) so it never competes with the page
+    // loading. A tap isn't used: its click would land on the backdrop and close it.
+    const show = () => setOpen(true);
+    const openTimer = setTimeout(show, 10000);
+    window.addEventListener("scroll", show, { passive: true, once: true });
+    // Fetch the image early so it's ready the moment the popup opens.
+    const imageTimer = setTimeout(() => {
+      if (popup.mediaType === "image" && popup.imageUrl) new Image().src = popup.imageUrl;
+    }, 3000);
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(imageTimer);
+      window.removeEventListener("scroll", show);
+    };
+  }, [popup.enabled, popup.mediaType, popup.imageUrl, sig]);
 
   // Lock body scroll while open.
   useEffect(() => {
