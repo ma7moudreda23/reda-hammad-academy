@@ -15,7 +15,7 @@ const SUBJECTS: Subject[] = [
   {
     ar: "رياضيات 1",
     arLink:
-      "https://drive.google.com/file/d/1YZvgYdGbEjqBfcbkciZxTQtxa_JJtcqZ/view",
+      "https://drive.google.com/file/d/156o2_8grMjM1eBP4GVHTdlsK7IF_MdzI/view",
     en: "Mathematics 1",
     enLink:
       "https://drive.google.com/file/d/1IjlDx1RVJKk7tN_lpHbFbOde7KG9sTZm/view",
