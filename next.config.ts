@@ -17,6 +17,13 @@ const nextConfig: NextConfig = {
     cpus: 2,
     preloadEntriesOnStart: false,
   },
+  // شفرة القدرات lives in the Moodle web root, so site deploys can't wipe it.
+  async redirects() {
+    return [
+      { source: "/tests", destination: "https://platform.redahammadacademy.com/tests/", permanent: false },
+      { source: "/tests/:path*", destination: "https://platform.redahammadacademy.com/tests/:path*", permanent: false },
+    ];
+  },
   async headers() {
     const publicImage = [
       { key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" },
